@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "name": "Frieda",
+    "name": "Fred",
     "picture": "images/avatar1.png",
     "age": 3,
     "breed": "Scottish Terrier",
@@ -17,7 +17,7 @@
   },
   {
     "id": 2,
-    "name": "Collins",
+    "name": "Melissa",
     "picture": "images/avatar3.png",
     "age": 2,
     "breed": "French Bulldog",
@@ -25,7 +25,7 @@
   },
   {
     "id": 3,
-    "name": "Melissa",
+    "name": "Collins",
     "picture": "images/avatar4.png",
     "age": 2,
     "breed": "Boxer",
@@ -33,7 +33,7 @@
   },
   {
     "id": 4,
-    "name": "Jeanine",
+    "name": "Jean",
     "picture": "images/avatar5.png",
     "age": 2,
     "breed": "French Bulldog",
@@ -41,7 +41,7 @@
   },
   {
     "id": 5,
-    "name": "Elvia",
+    "name": "Yann",
     "picture": "images/avatar6.png",
     "age": 3,
     "breed": "French Bulldog",
@@ -57,7 +57,7 @@
   },
   {
     "id": 7,
-    "name": "Coleman",
+    "name": "Nichole",
     "picture": "images/avatar8.png",
     "age": 3,
     "breed": "Golden Retriever",
@@ -65,7 +65,7 @@
   },
   {
     "id": 8,
-    "name": "Nichole",
+    "name": "Coleman",
     "picture": "images/avatar9.png",
     "age": 2,
     "breed": "French Bulldog",
@@ -81,7 +81,7 @@
   },
   {
     "id": 10,
-    "name": "Leonor",
+    "name": "Dean",
     "picture": "images/avatar11.png",
     "age": 2,
     "breed": "Boxer",
@@ -89,7 +89,7 @@
   },
   {
     "id": 11,
-    "name": "Dean",
+    "name": "Stevenson",
     "picture": "images/avatar12.png",
     "age": 3,
     "breed": "Scottish Terrier",
@@ -97,7 +97,7 @@
   },
   {
     "id": 12,
-    "name": "Stevenson",
+    "name": "Leonor",
     "picture": "images/avatar13.png",
     "age": 3,
     "breed": "French Bulldog",

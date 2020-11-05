@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Decentralized MarketPlace</title>
 
@@ -17,15 +18,88 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+
   <body>
+
+
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Decentralized MarketPlace</h1>
+          <h1 class="text-center">MarketPlace 3.0</h1>
           <hr/>
           <br/>
         </div>
       </div>
+
+      <h3>
+        <a class="btn btn-primary" data-toggle="collapse" href="#collapseRequest" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Launch request
+        </a>
+        <a class="btn btn-primary" data-toggle="collapse" href="#collapseRegister" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Register resource
+        </a>
+      </h3>
+
+      <div class="collapse" id="collapseRequest">
+        <div class="card card-body">
+            <form>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Availability</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">What service</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">QoS metrics</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Incentives</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Re-check span</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <hr/>
+      </div>
+
+      <div class="collapse" id="collapseRegister">
+        <div class="card card-body">
+          <div style="margin-bottom: 5%;">
+            <h3>Propose a service</h3>
+            <form>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Availability</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Service</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <hr/>
+          </div>
+      </div>
+
+
+
+    <h3>Registered Resources</h3>
 
       <div id="resourcesRow" class="row">
         <!-- resourceS LOAD HERE -->
@@ -41,8 +115,6 @@
           <div class="panel-body">
             <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
             <br/><br/>
-            <strong>Breed</strong>: <span class="resource-breed">Golden Retriever</span><br/>
-            <strong>Age</strong>: <span class="resource-age">3</span><br/>
             <strong>Location</strong>: <span class="resource-location">Warren, MI</span><br/><br/>
             <button class="btn btn-default btn-adopt" type="button" data-id="0">Hire</button>
           </div>
