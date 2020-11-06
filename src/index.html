@@ -8,10 +8,21 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Decentralized MarketPlace</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--  jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- Bootstrap Date-Picker Plugin -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Address plugin -->
+    <link rel="stylesheet" href="css/address.css">
+
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -30,74 +41,281 @@
           <br/>
         </div>
       </div>
+      <hr/>
 
-      <h3>
-        <a class="btn btn-primary" data-toggle="collapse" href="#collapseRequest" role="button" aria-expanded="false" aria-controls="collapseExample">
-          Launch request
-        </a>
-        <a class="btn btn-primary" data-toggle="collapse" href="#collapseRegister" role="button" aria-expanded="false" aria-controls="collapseExample">
-          Register resource
-        </a>
-      </h3>
-
-      <div class="collapse" id="collapseRequest">
-        <div class="card card-body">
-            <form>
-              <div class="form-group">
-                <label for="exampleInputEmail1">Availability</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">What service</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">QoS metrics</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Incentives</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Re-check span</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-              </div>
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-              </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+              <button class="btn btn-link btn-lg" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Launch request
+              </button>
+            </h5>
           </div>
-          <hr/>
+      
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <form method="post">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Availability</label>
+                  <div class="form-group">
+                    <div class='input-group dates' id='datetimepicker6'>
+                       <input type="text" class="form-control" name="daterange" value="11/15/2020 - 12/01/2020" />
+                       <script>
+                          var $j = jQuery.noConflict();
+                          $j(function() {
+                            $j('input[name="daterange"]').daterangepicker({
+                              opens: 'left'
+                            }, function(start, end, label) {
+                              console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                          });
+                          </script>
+                       <span class="input-group-addon">
+                       <span class="glyphicon glyphicon-calendar"></span>
+                       </span>
+                    </div>
+                 </div>          
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div class="form-group">
+                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Cool">
+                    <label for="vehicle1">Cool storage</label><br>
+
+                    <input type="checkbox" id="vehicle2" name="vehicle2" value="Chemical">
+                    <label for="vehicle2">Chemical license</label><br>
+
+                    <input type="checkbox" id="vehicle2" name="vehicle3" value="International">
+                    <label for="vehicle2">International license</label><br>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Pickup address</label>
+                  <fieldset class="fancy-form">
+                    <p class="instructions">Start by entering your zip code.</p>
+                    <div>
+                      <div>
+                        <input type="text" name="address-line-1" id="address-line-1">
+                        <label for="address-line-1">Street #1</label>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="city-wrap">
+                        <input type="text" name="city" id="city">
+                        <label for="city">City</label>
+                      </div>
+                      <div class="zip-wrap">
+                        <input type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip">
+                        <label for="zip">Zip</label>
+                        <p class="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                
+                    <div class="submit-wrap">
+                      <input type="submit" value="Submit">
+                    </div>
+                
+                  </fieldset>
+
+                  <script>
+                  var $j = jQuery.noConflict();
+
+                  function is_int(value) {
+                                    if ((parseFloat(value) == parseInt(value)) && !isNaN(value)) {
+                                      return true;
+                                    } else {
+                                      return false;
+                                    }
+                                  }
+
+                                  $j(".fancy-form div > div").hide();
+
+                                  $j("#zip").keyup(function() {
+
+                                    // Cache
+                                    var el = $j(this);
+
+                                    // Did they type five integers?
+                                    if ((el.val().length == 5) && (is_int(el.val()))) {
+
+                                      // Call Ziptastic for information
+                                      $j.ajax({
+                                        url: "https://zip.getziptastic.com/v2/US/" + el.val(),
+                                        cache: false,
+                                        dataType: "json",
+                                        type: "GET",
+                                        success: function(result, success) {
+
+                                          $j(".zip-error, .instructions").slideUp(200);
+
+                                          $j("#city").val(result.city);
+
+                                          $j("#state").val(result.state);
+
+                                          $j(".fancy-form div > div").slideDown();
+
+                                          $j("#zip").blur();
+                                          $j("#address-line-1").show().focus();
+
+                                        },
+                                        error: function(result, success) {
+
+                                          $j(".zip-error").slideDown(300);
+
+                                        }
+
+                                      });
+
+                                    } else if (el.val().length < 5) {
+
+                                      $j(".zip-error").slideUp(200);
+
+                                    };
+
+                                  });
+
+                  </script>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Delivery address</label>
+                  <fieldset class="fancy-form">
+                    <p class="instructions">Start by entering your zip code.</p>
+                    <div>
+                      <div>
+                        <input type="text" name="address-line-1" id="address-line-1">
+                        <label for="address-line-1">Street #1</label>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="city-wrap">
+                        <input type="text" name="city" id="city">
+                        <label for="city">City</label>
+                      </div>
+                      <div class="zip-wrap">
+                        <input type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip">
+                        <label for="zip">Zip</label>
+                        <p class="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                
+                    <div class="submit-wrap">
+                      <input type="submit" value="Submit">
+                    </div>
+                
+                  </fieldset>
+
+                  <script>
+                  var $j = jQuery.noConflict();
+
+                  function is_int(value) {
+                                    if ((parseFloat(value) == parseInt(value)) && !isNaN(value)) {
+                                      return true;
+                                    } else {
+                                      return false;
+                                    }
+                                  }
+
+                                  $j(".fancy-form div > div").hide();
+
+                                  $j("#zip").keyup(function() {
+
+                                    // Cache
+                                    var el = $j(this);
+
+                                    // Did they type five integers?
+                                    if ((el.val().length == 5) && (is_int(el.val()))) {
+
+                                      // Call Ziptastic for information
+                                      $j.ajax({
+                                        url: "https://zip.getziptastic.com/v2/US/" + el.val(),
+                                        cache: false,
+                                        dataType: "json",
+                                        type: "GET",
+                                        success: function(result, success) {
+
+                                          $j(".zip-error, .instructions").slideUp(200);
+
+                                          $j("#city").val(result.city);
+
+                                          $j("#state").val(result.state);
+
+                                          $j(".fancy-form div > div").slideDown();
+
+                                          $j("#zip").blur();
+                                          $j("#address-line-1").show().focus();
+
+                                        },
+                                        error: function(result, success) {
+
+                                          $j(".zip-error").slideDown(300);
+
+                                        }
+
+                                      });
+
+                                    } else if (el.val().length < 5) {
+
+                                      $j(".zip-error").slideUp(200);
+
+                                    };
+
+                                  });
+
+                  </script>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">QoS metrics</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Incentives</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+                </div>
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+              </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+              <button class="btn btn-link btn-lg collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Offer service
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              <form>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Availability</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Service</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+                </div>
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+              </div>
+          </div>
+        </div>
       </div>
-
-      <div class="collapse" id="collapseRegister">
-        <div class="card card-body">
-          <div style="margin-bottom: 5%;">
-            <h3>Propose a service</h3>
-            <form>
-              <div class="form-group">
-                <label for="exampleInputEmail1">Availability</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Service</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-              </div>
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-              </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-          </div>
-          <hr/>
-          </div>
-      </div>
-
-
+    <hr/>
 
     <h3>Registered Resources</h3>
 
