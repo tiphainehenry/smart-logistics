@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <!-- Address plugin -->
-    <link rel="stylesheet" href="css/address.css">
+    <link rel="stylesheet" href="css/formCustom.css">
 
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -32,6 +32,7 @@
 
   <body>
 
+   <!--form idea https://codepen.io/carlinscuderi/pen/XmeyvV--> 
 
     <div class="container">
       <div class="row">
@@ -95,11 +96,10 @@
                 <div class="form-group">
                   <label for="exampleInputPassword1">Pickup address</label>
                   <fieldset class="fancy-form">
-                    <p class="instructions">Start by entering your zip code.</p>
                     <div>
                       <div>
                         <input type="text" name="address-line-1" id="address-line-1">
-                        <label for="address-line-1">Street #1</label>
+                        <label for="address-line-1">Street</label>
                       </div>
                     </div>
                     <div>
@@ -120,75 +120,16 @@
                 
                   </fieldset>
 
-                  <script>
-                  var $j = jQuery.noConflict();
-
-                  function is_int(value) {
-                                    if ((parseFloat(value) == parseInt(value)) && !isNaN(value)) {
-                                      return true;
-                                    } else {
-                                      return false;
-                                    }
-                                  }
-
-                                  $j(".fancy-form div > div").hide();
-
-                                  $j("#zip").keyup(function() {
-
-                                    // Cache
-                                    var el = $j(this);
-
-                                    // Did they type five integers?
-                                    if ((el.val().length == 5) && (is_int(el.val()))) {
-
-                                      // Call Ziptastic for information
-                                      $j.ajax({
-                                        url: "https://zip.getziptastic.com/v2/US/" + el.val(),
-                                        cache: false,
-                                        dataType: "json",
-                                        type: "GET",
-                                        success: function(result, success) {
-
-                                          $j(".zip-error, .instructions").slideUp(200);
-
-                                          $j("#city").val(result.city);
-
-                                          $j("#state").val(result.state);
-
-                                          $j(".fancy-form div > div").slideDown();
-
-                                          $j("#zip").blur();
-                                          $j("#address-line-1").show().focus();
-
-                                        },
-                                        error: function(result, success) {
-
-                                          $j(".zip-error").slideDown(300);
-
-                                        }
-
-                                      });
-
-                                    } else if (el.val().length < 5) {
-
-                                      $j(".zip-error").slideUp(200);
-
-                                    };
-
-                                  });
-
-                  </script>
                 </div>
 
 
                 <div class="form-group">
                   <label for="exampleInputPassword1">Delivery address</label>
                   <fieldset class="fancy-form">
-                    <p class="instructions">Start by entering your zip code.</p>
                     <div>
                       <div>
                         <input type="text" name="address-line-1" id="address-line-1">
-                        <label for="address-line-1">Street #1</label>
+                        <label for="address-line-1">Street</label>
                       </div>
                     </div>
                     <div>
@@ -202,76 +143,30 @@
                         <p class="zip-error">Not a real zip code.</p>
                       </div>
                     </div>
-                
-                    <div class="submit-wrap">
-                      <input type="submit" value="Submit">
-                    </div>
-                
+                              
                   </fieldset>
 
-                  <script>
-                  var $j = jQuery.noConflict();
-
-                  function is_int(value) {
-                                    if ((parseFloat(value) == parseInt(value)) && !isNaN(value)) {
-                                      return true;
-                                    } else {
-                                      return false;
-                                    }
-                                  }
-
-                                  $j(".fancy-form div > div").hide();
-
-                                  $j("#zip").keyup(function() {
-
-                                    // Cache
-                                    var el = $j(this);
-
-                                    // Did they type five integers?
-                                    if ((el.val().length == 5) && (is_int(el.val()))) {
-
-                                      // Call Ziptastic for information
-                                      $j.ajax({
-                                        url: "https://zip.getziptastic.com/v2/US/" + el.val(),
-                                        cache: false,
-                                        dataType: "json",
-                                        type: "GET",
-                                        success: function(result, success) {
-
-                                          $j(".zip-error, .instructions").slideUp(200);
-
-                                          $j("#city").val(result.city);
-
-                                          $j("#state").val(result.state);
-
-                                          $j(".fancy-form div > div").slideDown();
-
-                                          $j("#zip").blur();
-                                          $j("#address-line-1").show().focus();
-
-                                        },
-                                        error: function(result, success) {
-
-                                          $j(".zip-error").slideDown(300);
-
-                                        }
-
-                                      });
-
-                                    } else if (el.val().length < 5) {
-
-                                      $j(".zip-error").slideUp(200);
-
-                                    };
-
-                                  });
-
-                  </script>
                 </div>
 
                 <div class="form-group">
-                  <label for="exampleInputPassword1">QoS metrics</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+                  <label for="exampleInputPassword1">Desired Quality of Service (QoS)</label>
+                  <p>Range the importance of the following QoS metrics:</p>
+                    <div >
+                      <label for="qos1">Rapidity of delivery</label>
+                      <input style="width: 60%;" type="range" id="qos1" name="qos1"
+                             min="0" max="11">
+                    </div>
+                    <div >
+                      <label for="qos2">Quality of delivery</label>
+                      <input style="width: 60%;" type="range" id="qos2" name="qos2"
+                             min="0" max="11">
+                    </div>
+                    <div >
+                      <label for="qos3">Corporate social responsibility</label>
+                      <input style="width: 60%;" type="range" id="qos3" name="qos3"
+                             min="0" max="11">
+                    </div>
+
                 </div>
                 <div class="form-group">
                   <label for="exampleInputPassword1">Incentives</label>
