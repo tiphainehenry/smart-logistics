@@ -1,11 +1,4 @@
-    .fancy-form input {
-    transition: all 0.3s ease-out;
-    }
     
-    .fancy-form fieldset {
-    border: none;
-    padding: 25px 10px 10px 10px;
-    }
     
     .fancy-form label {
     display: block;
@@ -17,9 +10,6 @@
     opacity: 0.8;
     }
     
-    .fancy-form input:focus + label {
-    opacity: 1.0;
-    }
     
     .fancy-form input:not([type=submit]) {
     width: 100%;
@@ -30,10 +20,6 @@
     display: none;
     }
     
-    .fancy-form div {
-    margin: 0 0 6px 0;
-    clear: both;
-    }
     
     .fancy-form div > div {
     padding: 4px;
@@ -44,10 +30,6 @@
     margin-right: 1%;
     }
     
-    .fancy-form .state-wrap {
-    width: 9%;
-    margin-right: 1%;
-    }
     
     .fancy-form .zip-wrap {
     width: 20%;

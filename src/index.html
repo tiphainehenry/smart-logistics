@@ -54,7 +54,7 @@
             </h5>
           </div>
       
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
               <form method="post">
                 <div class="form-group">
@@ -82,14 +82,14 @@
                 <div class="form-group">
                   <label for="exampleInputPassword1">Truck equipment</label>
                   <div class="form-group">
-                    <input type="checkbox" id="vehicle1" name="vehicle1" value="Cool">
-                    <label for="vehicle1">Cool storage</label><br>
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
 
-                    <input type="checkbox" id="vehicle2" name="vehicle2" value="Chemical">
-                    <label for="vehicle2">Chemical license</label><br>
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
 
-                    <input type="checkbox" id="vehicle2" name="vehicle3" value="International">
-                    <label for="vehicle2">International license</label><br>
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
                   </div>
                 </div>
 
@@ -98,18 +98,15 @@
                   <fieldset class="fancy-form">
                     <div>
                       <div>
-                        <input type="text" name="address-line-1" id="address-line-1">
-                        <label for="address-line-1">Street</label>
+                        <input class="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
                       </div>
                     </div>
                     <div>
                       <div class="city-wrap">
-                        <input type="text" name="city" id="city">
-                        <label for="city">City</label>
+                        <input class="form-control" type="text" name="city" id="city" placeholder="city">
                       </div>
                       <div class="zip-wrap">
-                        <input type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip">
-                        <label for="zip">Zip</label>
+                        <input class="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
                         <p class="zip-error">Not a real zip code.</p>
                       </div>
                     </div>
@@ -117,29 +114,23 @@
                     <div class="submit-wrap">
                       <input type="submit" value="Submit">
                     </div>
-                
                   </fieldset>
-
                 </div>
-
 
                 <div class="form-group">
                   <label for="exampleInputPassword1">Delivery address</label>
                   <fieldset class="fancy-form">
                     <div>
                       <div>
-                        <input type="text" name="address-line-1" id="address-line-1">
-                        <label for="address-line-1">Street</label>
+                        <input class="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
                       </div>
                     </div>
                     <div>
                       <div class="city-wrap">
-                        <input type="text" name="city" id="city">
-                        <label for="city">City</label>
+                        <input class="form-control" type="text" name="city" id="city" placeholder="city">
                       </div>
                       <div class="zip-wrap">
-                        <input type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip">
-                        <label for="zip">Zip</label>
+                        <input class="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
                         <p class="zip-error">Not a real zip code.</p>
                       </div>
                     </div>
@@ -152,7 +143,7 @@
                   <label for="exampleInputPassword1">Desired Quality of Service (QoS)</label>
                   <p>Range the importance of the following QoS metrics:</p>
                     <div >
-                      <label for="qos1">Rapidity of delivery</label>
+                      <label for="qos1">Delay acceptance</label>
                       <input style="width: 60%;" type="range" id="qos1" name="qos1"
                              min="0" max="11">
                     </div>
@@ -170,11 +161,14 @@
                 </div>
                 <div class="form-group">
                   <label for="exampleInputPassword1">Incentives</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                  <div class="form-group">
+                    <input type="number" class="form-control" id="caution" placeholder="enter here">
+                  </div>
+                  <div class="form-group">
+                    <label for="tips">Tips</label>
+                    <input type="number" class="form-control" id="tips" placeholder="enter here">
+                  </div>
+    
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
               </form>
@@ -194,16 +188,86 @@
               <form>
                 <div class="form-group">
                   <label for="exampleInputEmail1">Availability</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="enter here">
+                  <div class="form-group">
+                    <div class='input-group dates' id='datetimepicker6'>
+                       <input type="text" class="form-control" name="daterange" value="11/15/2020 - 12/01/2020" />
+                       <script>
+                          var $j = jQuery.noConflict();
+                          $j(function() {
+                            $j('input[name="daterange"]').daterangepicker({
+                              opens: 'left'
+                            }, function(start, end, label) {
+                              console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                          });
+                          </script>
+                       <span class="input-group-addon">
+                       <span class="glyphicon glyphicon-calendar"></span>
+                       </span>
+                    </div>
+                 </div>          
                 </div>
+
                 <div class="form-group">
-                  <label for="exampleInputPassword1">Service</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="enter here">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div class="form-group">
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
+
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
+
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
+                  </div>
                 </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Warehouse Location</label>
+                  <fieldset class="fancy-form">
+                    <div>
+                      <div>
+                        <input class="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
+                      </div>
+                    </div>
+                    <div>
+                      <div class="city-wrap">
+                        <input class="form-control" type="text" name="city" id="city" placeholder="city">
+                      </div>
+                      <div class="zip-wrap">
+                        <input class="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
+                        <p class="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                
+                    <div class="submit-wrap">
+                      <input type="submit" value="Submit">
+                    </div>
+                  </fieldset>
                 </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div class="form-group">
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
+
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
+
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Max caution accepted</label>
+                  <div class="form-group">
+                    <input type="number" class="form-control" id="caution" placeholder="enter here">
+                  </div>
+    
+                </div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
               </form>
               </div>
