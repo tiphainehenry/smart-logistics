@@ -1,10 +1,12 @@
 pragma experimental ABIEncoderV2;
+
 //pragma solidity >=0.4.22 <0.7.0;
 
 /**
  * @title Elect
- * @dev Store & retrieve value in a variable
  */
+
+
 contract Elect {
 
     uint256 number;
@@ -12,18 +14,19 @@ contract Elect {
     // list of persons with attribute values:   
     // [[id, start, end, pickup, delivery, equipment1, equipment2, equipment3 //, history]]
     // pickup and delivery: *10E7
+    
     uint[][] candidates =[   //[int(1), int(120121), int(140121), int(457578137), int(48320114), int(0),int(1),int(0)],
                             //[int(2), int(100121), int(140121), int(488627250), int(22875920), int(1),int(1),int(0)],
                             //[int(3), int(120121), int(150121), int(481113387), int(-16800198), int(0),int(1),int(1)],
                             //[int(4), int(100121), int(140121), int(472186371), int(-15541362), int(0),int(1),int(0)],
                             //[int(5), int(110121), int(140121), int(473215806), int(50414701), int(1),int(1),int(0)]
                         
-                            [1, 120121, 150121, 1,0,1],
-                            [2, 120121, 150121, 1,1,0],
-                            [3, 120121, 150121, 1,0,1],
-                            [4, 100121, 140121, 1,0,1],
-                            [5, 110121, 140121, 1,1,1]
-                            ];     
+                            [1, 12,1,21, 15,1,21, 1,1,1],
+                            [2, 12,1,21, 15,1,21, 1,1,1],
+                            [3, 12,1,21, 15,1,21, 1,1,1],
+                            [4, 10,1,21, 14,1,21, 1,1,1],
+                            [5, 11,1,21, 14,1,21, 1,1,1]
+                        ];     
     
     uint256[] attributes;    // list of attributes with ponderation
     
@@ -31,11 +34,10 @@ contract Elect {
     
 
     // function filter
-    //    function filter(int[][] memory _candidates, uint[2] memory availability, int[] memory _sortingAttributes) public payable returns (uint[5] memory) {
-    function filter(uint[] memory _sortingAttributes, uint[2] memory availability) public payable returns (uint[5] memory) {
+    // function filter(int[][] memory _candidates, uint[6] memory availability, int[] memory _sortingAttributes) public payable returns (uint[5] memory) {
+    function filter(uint[] memory _sortingAttributes, uint[] memory availability) public payable returns (uint[5] memory) {
         
         for(uint ind=0; ind<candidates.length; ind++){
-            
             uint[] memory person=candidates[ind];
             bool testOutput = true;
 
@@ -50,14 +52,25 @@ contract Elect {
                 index++;
             }
 
-            // filter on availability
+
+            if(testOutput){        // filter on availability
             
-            // same month, same year
-            // different month, same year
-            // different years
-
-
-
+                if(availability.length>3){ // same day
+                    uint reqDay=availability[0];
+                    uint reqMonth=availability[1];
+                    uint reqYear=availability[2];
+                    
+                    uint avStartDay = person[1];
+                    uint avStartMonth = person[2];
+                    uint avStartYear = person[3];
+                    
+                    if((reqMonth==avStartMonth) && (reqYear==avStartYear)){              // same month, same year
+                        if(avStartDay > reqDay){ // person is booked
+                            testOutput=false;
+                        }
+                    }
+                }
+            }
             
             if(testOutput){
                     filteredCandidates[ind]=1;
