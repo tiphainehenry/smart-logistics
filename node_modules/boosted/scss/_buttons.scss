@@ -1,0 +1,285 @@
+// stylelint-disable selector-no-qualifying-type
+
+//
+// Base styles
+//
+
+.btn {
+  display: inline-flex; // Boosted mod
+  align-items: center; // Boosted mod
+  font-family: $btn-font-family;
+  font-weight: $btn-font-weight;
+  color: $body-color;
+  text-align: center;
+  text-decoration: if($link-decoration == none, null, none);
+  white-space: $btn-white-space;
+  vertical-align: middle;
+  user-select: none;
+  background-color: transparent;
+  border: $btn-border-width solid transparent;
+  @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
+  @include transition($btn-transition);
+  outline-offset: $border-width * 2; // Boosted mod
+
+  @include hover() {
+    color: $body-color;
+    text-decoration: none;
+  }
+
+  &:focus,
+  &.focus {
+    outline: $border-width solid; // Boosted mod
+    outline-offset: -#{$border-width}; // Boosted mod
+    box-shadow: $btn-focus-box-shadow;
+  }
+
+  // Disabled comes first so active can properly restyle
+  &.disabled,
+  &:disabled {
+    opacity: $btn-disabled-opacity;
+    // @include box-shadow(none); // Boosted mod
+  }
+
+  &:not(:disabled):not(.disabled) {
+    cursor: if($enable-pointer-cursor-for-buttons, pointer, null);
+
+    // Boosted mod: no box-shadow at all
+  }
+
+  // Boosted mod
+  [class*="svg-"],
+  [class*="icon-"] {
+    display: inline-block;
+  }
+
+  &:not(.btn-icon) {
+    [class*="svg-"],
+    [class*="icon-"] {
+      margin-right: $border-width * 3;
+    }
+  }
+
+  [class*="icon-"]::before {
+    font-size: $font-size-xlg;
+  }
+  // end mod
+}
+
+// Future-proof disabling of clicks on `<a>` elements
+a.btn.disabled,
+fieldset:disabled a.btn {
+  pointer-events: none;
+}
+
+
+//
+// Alternate buttons
+//
+
+// Boosted mod : custom buttons
+.btn-primary,
+.btn-warning {
+  @include button-variant(theme-color("primary"), theme-color("primary"), $active-background: $white, $active-border: $black);
+  &.btn-inverse {
+    @include button-variant(theme-color("primary"), theme-color("primary"), $white, $white, $black, $white, $gray-700, $gray-700, $black);
+  }
+}
+.btn-secondary,
+.btn-light {
+  @include button-variant($white, $black, $disabled-background: $white, $disabled-color: $gray-500);
+  &.btn-inverse {
+    @include button-variant($black, $white, $white, $white, theme-color("primary"), theme-color("primary"), transparent, $gray-700, $gray-700);
+  }
+}
+.btn-success {
+  @include button-variant(theme-color("success"), theme-color("success"));
+  &.btn-inverse {
+    @include button-variant(theme-color("success"), theme-color("success"), $white, $white, theme-color("primary"), theme-color("primary"), $gray-700, $gray-700, $black);
+  }
+}
+.btn-info,
+.btn-dark {
+  @include button-variant(theme-color("dark"), theme-color("dark"), $white, $black);
+  &.btn-inverse {
+    @include button-variant($white, $white, $black, $white, theme-color("primary"), theme-color("primary"), $gray-700, $gray-700, $black);
+  }
+}
+.btn-danger {
+  @include button-variant(theme-color("danger"), theme-color("danger"));
+  &.btn-inverse {
+    @include button-variant(theme-color("danger"), theme-color("danger"), $white, $white, theme-color("primary"), theme-color("primary"), $gray-700, $gray-700, $black);
+  }
+}
+
+// Boosted mod: no .btn-outline-*
+
+//
+// Link buttons
+//
+
+// Make a button look and behave like a link
+.btn-link {
+  // font-weight: $font-weight-normal; // Boosted mod font-weight stay bold
+  color: $link-color;
+  text-decoration: $link-decoration;
+  // Boosted mod
+  // stylelint-disable-next-line declaration-no-important
+  border-color: transparent !important;
+
+  &.btn-inverse {
+    color: $white;
+  }
+  // end mod
+
+  @include hover() {
+    color: $link-hover-color;
+    text-decoration: $link-hover-decoration;
+  }
+
+  &:focus,
+  &.focus {
+    text-decoration: $link-hover-decoration;
+  }
+
+  &:disabled,
+  &.disabled {
+    color: $btn-link-disabled-color;
+    pointer-events: none;
+  }
+
+  // No need for an active state here
+}
+
+// Boosted mod: icon buttons are squared
+.btn-icon {
+  justify-content: center;
+  min-width: $btn-icon-size;
+  padding: $btn-padding-y;
+  // stylelint-disable-next-line declaration-no-important
+  line-height: .875 !important; // Ensure .btn-icon is squared
+}
+
+// Boosted mod: social buttons
+.btn-social {
+  width: $btn-icon-size;
+  height: $btn-icon-size;
+  padding: 0;
+  background: transparent no-repeat center / $btn-social-bg-size;
+  border: $border-width solid $black;
+  @include border-radius(50%, 50%);
+  @include transition(none);
+
+  &:hover,
+  &:focus {
+    outline: 0;
+  }
+}
+
+@each $network in map-keys($o-networks) {
+  $icon: str-replace(icon-conf($network, "icon"), "#boosted#", $black);
+  $icon-inverse: str-replace(icon-conf($network, "icon"), "#boosted#", $white);
+  .btn-#{$network} {
+    @if map-has-key(map-get($o-networks, $network), "size") {
+      background-size: icon-conf($network, "size");
+    }
+
+    @if map-has-key(map-get($o-networks, $network), "position") {
+      background-position: icon-conf($network, "position");
+    }
+
+    &,
+    &.btn-inverse:active {
+      background-color: $white;
+      background-image: escape-svg(url("data:image/svg+xml,#{$icon}"));
+    }
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.btn-inverse {
+      background-image: escape-svg(url("data:image/svg+xml,#{$icon-inverse}"));
+      border-color: $white;
+      outline-color: $white;
+    }
+
+    &.btn-inverse {
+      background-color: $black;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: icon-conf($network, "color");
+      border-color: icon-conf($network, "color");
+      outline-color: icon-conf($network, "color");
+    }
+
+    &:active {
+      background-color: $black;
+      border-color: $black;
+      outline-color: $black;
+    }
+  }
+}
+// end mod
+
+
+//
+// Button Sizes
+//
+
+.btn-lg {
+  @include button-size($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-line-height-lg, $btn-border-radius-lg);
+  // Boosted mod
+  &.btn-icon {
+    min-width: $btn-icon-size-lg;
+    padding: $btn-icon-padding-lg;
+  }
+
+  [class*="icon-"]::before {
+    font-size: $h3-font-size;
+  }
+
+  &:not(.btn-icon) [class*="icon-"] {
+    margin-top: $border-width * -1;
+    margin-bottom: $border-width * -1;
+  }
+  // end mod
+}
+
+.btn-sm {
+  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
+  // Boosted mod
+  &.btn-icon {
+    min-width: $btn-icon-size-sm;
+    padding: $btn-icon-padding-sm;
+  }
+
+  [class*="icon-"]::before {
+    font-size: $font-size-sm;
+  }
+  // end mod
+}
+
+
+//
+// Block button
+//
+
+.btn-block {
+  display: block;
+  width: 100%;
+
+  // Vertically space out multiple block buttons
+  + .btn-block {
+    margin-top: $btn-block-spacing-y;
+  }
+}
+
+// Specificity overrides
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  &.btn-block {
+    width: 100%;
+  }
+}

@@ -1,0 +1,65 @@
+@mixin caret-down() {
+  border-top: $caret-width solid;
+  border-right: $caret-width solid transparent;
+  border-bottom: 0;
+  border-left: $caret-width solid transparent;
+}
+
+@mixin caret-up() {
+  border-top: 0;
+  border-right: $caret-width solid transparent;
+  border-bottom: $caret-width solid;
+  border-left: $caret-width solid transparent;
+}
+
+@mixin caret-right() {
+  border-top: $caret-width solid transparent;
+  border-right: 0;
+  border-bottom: $caret-width solid transparent;
+  border-left: $caret-width solid;
+}
+
+@mixin caret-left() {
+  border-top: $caret-width solid transparent;
+  border-right: $caret-width solid;
+  border-bottom: $caret-width solid transparent;
+}
+
+@mixin caret($direction: down) {
+  @if $enable-caret {
+    &::after {
+      display: inline-flex; // Boosted mod
+      align-self: $caret-alignment; // Boosted mod
+      margin-left: $caret-spacing;
+      content: "";
+      @if $direction == down {
+        @include caret-down();
+        transform: translateY($border-width / 2); // Boosted mod
+      } @else if $direction == up {
+        @include caret-up();
+        transform: none; // Boosted mod
+      } @else if $direction == right {
+        @include caret-right();
+        transform: none; // Boosted mod
+      }
+    }
+
+    @if $direction == left {
+      &::after {
+        display: none;
+      }
+
+      &::before {
+        display: inline-flex; // Boosted mod
+        align-self: $caret-alignment; // Boosted mod
+        margin-right: $caret-spacing;
+        content: "";
+        @include caret-left();
+      }
+    }
+
+    &:empty::after {
+      margin-left: 0;
+    }
+  }
+}

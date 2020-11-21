@@ -1,0 +1,156 @@
+//
+// Base styles
+//
+
+.alert {
+  position: relative;
+  // Boosted mod
+  display: flex;
+  // end mod
+  padding: $alert-padding-y $alert-padding-x;
+  margin-bottom: $alert-margin-bottom;
+  font-weight: $font-weight-bold; // Boosted mod
+  border: $alert-border-width solid transparent;
+  @include border-radius($alert-border-radius);
+
+  // Boosted mod
+  a {
+    color: inherit;
+    text-decoration: if($link-decoration == underline, null, underline); // Boosted mod: links are perceivable globally
+
+    &:hover {
+      color: theme-color("primary");
+
+      .bg-dark & {
+        color: $orange-2;
+      }
+    }
+  }
+
+  * p {
+    margin: 0;
+  }
+
+  p + p {
+    font-weight: $font-weight-normal;
+  }
+  // end mod
+}
+
+// Boosted mod
+.alert-icon {
+  width: 3rem;
+  margin: -#{map-get($spacers, 1) / 5} 0;
+
+  + * {
+    // @note: should be flex-basis but IE11 doesn't handle calc() in flex…
+    // stylelint-disable-next-line function-disallowed-list
+    max-width: calc(100% - (3rem + #{$alert-padding-x * 2} + #{$alert-close-icon-size}));
+    margin: $alert-icon-margin-y 0;
+  }
+
+  &::before {
+    display: block;
+    order: -1;
+    min-width: map-get($spacers, 4);
+    height: $alert-logo-size;
+    margin-right: $alert-logo-size;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: $alert-logo-size;
+  }
+}
+// end mod
+
+// Headings for larger alerts
+.alert-heading {
+  // Boosted mod: make headings look like paragraphs
+  margin: 0;
+  font-size: inherit;
+  // end mod
+  // Specified to prevent conflicts of changing $headings-color
+  color: inherit;
+
+  + p {
+    font-weight: $font-weight-normal;
+  }
+}
+
+// Boosted mod: links are perceivable globally
+
+// Dismissible alerts
+//
+// Expand the right padding and account for the close button's positioning.
+
+.alert-dismissible {
+  // Boosted mod: simpler close button alignment
+  .close {
+    position: relative;
+    z-index: 2; // To allow .stretched-link beyond our close button
+    align-self: flex-start;
+    width: $alert-close-icon-size;
+    height: $alert-close-icon-size;
+    padding: $alert-padding-x;
+    margin: -.5rem -.75rem -.5rem auto;
+    color: inherit;
+    background-size: $alert-close-icon-size;
+
+    &,
+    &:hover,
+    &:focus {
+      background-image: escape-svg($close-icon-stroke);
+    }
+
+    .bg-dark &,
+    .navbar-dark & {
+      &,
+      &:hover,
+      &:focus {
+        background-image: escape-svg($close-icon-stroke-dark);
+      }
+    }
+  }
+  // end mod
+}
+
+// Boosted mod: small alerts
+.alert-sm {
+  padding: $alert-padding-y-sm 0;
+  font-size: $small-font-size;
+  line-height: $small-line-height;
+  border: 0;
+
+  .alert-icon {
+    width: 1.5rem;
+    margin: $alert-icon-margin-y 0;
+
+    &::before {
+      min-width: $alert-logo-size-sm;
+      height: $alert-logo-size-sm;
+      margin-right: $alert-logo-size-sm / 2;
+      background-size: $alert-logo-size-sm;
+    }
+  }
+
+  &.alert-dismissible .close {
+    margin: -#{$alert-padding-x / 2} 0 -#{$alert-padding-x / 2} auto;
+  }
+}
+//end mod
+
+
+// Alternate styles
+//
+// Generate contextual modifier classes for colorizing the alert.
+
+// Boosted mod: restrict alerts to functional colors
+@each $color in success, info, warning, danger {
+  .alert-#{$color} {
+    border-color: theme-color($color); // Boosted mod: only change border-color
+
+    .alert-icon {
+      @extend %svg-#{$color}; // Boosted mod: add an icon per level
+    }
+  }
+}
+// end mod

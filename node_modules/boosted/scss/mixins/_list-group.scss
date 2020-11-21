@@ -1,0 +1,24 @@
+// List Groups
+
+@mixin list-group-item-variant($state, $background, $color) {
+  .list-group-item-#{$state} {
+    // Boosted mod: ensure contrast
+    $contrast: color-yiq($background);
+    color: $contrast;
+    // end mod
+    background-color: $background;
+
+    &.list-group-item-action {
+      @include hover-focus() {
+        color: $contrast; // Boosted mod: ensure contrast
+        background-color: darken($background, 5%);
+      }
+
+      &.active {
+        color: $contrast; // Boosted mod: ensure contrast
+        background-color: $color;
+        border-color: $color;
+      }
+    }
+  }
+}

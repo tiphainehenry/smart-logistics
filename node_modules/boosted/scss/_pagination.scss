@@ -1,0 +1,224 @@
+.pagination {
+  display: flex;
+  flex-wrap: wrap; // Boosted mod
+  margin: $pagination-margin-y 0; // Boosted mod
+  @include list-unstyled();
+  @include border-radius();
+}
+
+.page-link {
+  // Boosted mod
+  // position: relative;
+  display: flex;
+  justify-content: center;
+  min-width: $pagination-item-size;
+  height: $pagination-item-size;
+  padding: $pagination-padding-y $pagination-padding-x;
+  margin-left: .5rem;
+  font-weight: $font-weight-bold;
+  // End mod
+  line-height: $pagination-line-height;
+  color: $pagination-color;
+  text-decoration: if($link-decoration == none, null, none);
+  background-color: $pagination-bg;
+  border: $pagination-border-width solid $pagination-border-color;
+  @include transition($transition-focus); // Boosted mod
+  outline-offset: $border-width * 3; // Boosted mod
+
+  &:hover,
+  &:focus {
+    z-index: 2;
+    color: $pagination-hover-color;
+    text-decoration: if($link-hover-decoration == none, null, none); // Boosted mod
+    background-color: $pagination-hover-bg;
+    border-color: $pagination-hover-border; // Boosted mod
+  }
+
+  &:focus {
+    z-index: 3;
+    outline: $pagination-focus-outline;
+    outline-offset: 0;
+    box-shadow: $pagination-focus-box-shadow;
+  }
+
+  // Boosted mod
+  &.has-label {
+    padding-top: subtract($pagination-padding-y, 1px);
+    padding-bottom: add($pagination-padding-y, 1px);
+  }
+  // Opinionated: add "hand" cursor to non-disabled .page-link elements
+  // &:not(:disabled):not(.disabled) {
+  //  cursor: pointer;
+  // }
+  // end mod
+}
+
+.page-item {
+  // Boosted mod: chevrons icons
+  &:first-child,
+  &:last-child {
+    .page-link {
+      color: $pagination-color;
+      border-color: $pagination-color;
+
+      &:hover,
+      &:focus {
+        color: $pagination-hover-bg;
+        background-color: $pagination-hover-color;
+        outline-color: $pagination-hover-color;
+      }
+
+      &:active {
+        color: color-yiq($pagination-active-item-bg);
+        background-color: $pagination-active-item-bg;
+        border-color: $pagination-active-item-border-color;
+      }
+    }
+  }
+
+  &:first-child .page-link::before,
+  &:last-child .page-link::after {
+    display: inline-block;
+    width: $pagination-icon-width;
+    height: $pagination-icon-height;
+    margin-top: $pagination-border-width / 2;
+    content: "";
+    background: $pagination-icon-background;
+  }
+
+  &:first-child {
+    margin-left: 0;
+
+    .page-link {
+      padding-right: $pagination-first-right-padding;
+      padding-left: $pagination-first-left-padding;
+
+      &::before {
+        margin-right: $border-width * -1.5;
+
+        /* rtl:raw:
+       transform: rotate(180deg);
+       */
+      }
+    }
+
+    .has-label::before {
+      margin: $pagination-border-width / 2 $pagination-icon-margin 0 0;
+    }
+  }
+
+  &:last-child {
+    .page-link {
+      padding-right: $pagination-last-right-padding;
+      padding-left: $pagination-last-left-padding;
+
+      &::after {
+        margin-left: $border-width * -1.5;
+
+        /* rtl:remove */
+        transform: rotate(180deg);
+      }
+    }
+
+    .has-label::after {
+      margin: $pagination-border-width / 2 0 0 $pagination-icon-margin;
+    }
+  }
+
+  &:first-child .page-link:hover::before,
+  &:first-child .page-link:focus::before,
+  &:last-child .page-link:hover::after,
+  &:last-child .page-link:focus::after {
+    background-image: escape-svg($pagination-icon-hover);
+  }
+
+  &:first-child .page-link:active::before,
+  &:last-child .page-link:active::after {
+    background-image: escape-svg($pagination-icon);
+  }
+  // End mod
+
+  &.active .page-link {
+    z-index: 3;
+    color: $pagination-active-color;
+    background-color: $pagination-active-bg;
+    border-color: $pagination-active-border-color;
+
+    // Boosted mod: missing focus styles on active item
+    &:focus {
+      background-color: $pagination-active-item-bg;
+      border-color: $pagination-active-item-border-color;
+      outline-color: $pagination-active-item-border-color;
+    }
+    // end mod
+  }
+
+  .page-link:active {
+    z-index: 1;
+    color: color-yiq($pagination-active-item-bg);
+    background-color: $pagination-active-item-bg;
+    border-color: $pagination-active-item-border-color;
+    outline-color: $pagination-active-item-border-color;
+  }
+
+  &.disabled .page-link {
+    color: $pagination-disabled-color;
+    pointer-events: none;
+    // Opinionated: remove the "hand" cursor set previously for .page-link
+    // cursor: auto; // Boosted mod
+    background-color: $pagination-disabled-bg;
+    border-color: $pagination-disabled-border-color;
+  }
+
+  // Boosted mod
+  &.disabled:first-child .page-link::before,
+  &.disabled:last-child .page-link::after {
+    opacity: .2;
+  }
+
+  // Ensure we only display 6 items:
+  // - the first three items
+  // - the last three items
+  // - including the .active one (so maybe not the third last item)
+  @include media-breakpoint-down(sm) {
+    display: none;
+
+    &.active,
+    &:nth-child(-n+3),
+    &:nth-last-child(-n+3) {
+      display: list-item;
+    }
+
+    &.active:not(:nth-child(-n+3)):not(:nth-last-child(-n+3)) ~ &:nth-last-child(3) {
+      display: none;
+    }
+  }
+
+  // The same than above, but for 8 items
+  @include media-breakpoint-between(sm, md) {
+    display: none;
+
+    &.active,
+    &:nth-child(-n+4),
+    &:nth-last-child(-n+4) {
+      display: list-item;
+    }
+
+    &.active:not(:nth-child(-n+4)):not(:nth-last-child(-n+4)) + &:nth-last-child(4) {
+      display: none;
+    }
+  }
+  // End mod
+}
+
+//
+// Sizing
+//
+// Boosted mod: no sizing
+// .pagination-lg {
+//   @include pagination-size($pagination-padding-y-lg, $pagination-padding-x-lg, $font-size-lg, $line-height-lg, $border-radius-lg, $pagination-min-width-lg);
+// }
+//
+// .pagination-sm {
+//   @include pagination-size($pagination-padding-y-sm, $pagination-padding-x-sm, $font-size-sm, $line-height-sm, $border-radius-sm, $pagination-min-width-sm);
+// }

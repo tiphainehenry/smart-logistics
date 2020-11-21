@@ -1,0 +1,152 @@
+//
+// Basic Bootstrap table
+//
+
+.table {
+  width: 100%;
+  margin-bottom: $spacer;
+  color: $table-color;
+  background-color: $table-bg; // Reset for nesting within parents with `background-color`.
+
+  // Boosted mod
+  tr {
+    border-bottom: $table-border-width solid $table-border-color;
+  }
+
+  th,
+  td {
+    padding: $table-cell-padding-y $table-cell-padding-x add($table-cell-padding-y, 1px); // Boosted mod
+    line-height: $table-cell-line-height;
+    vertical-align: top;
+  }
+
+  thead tr {
+    border-bottom-width: $table-border-width * 2;
+  }
+
+  tbody th {
+    font-weight: $font-weight-normal;
+  }
+
+  img,
+  svg,
+  [class^="svg-"],
+  [class^="icon-"],
+  [class*=" icon-"] {
+    display: inline-block;
+    width: $o-table-icon-size;
+    height: $o-table-icon-size;
+    margin: -#{map-get($spacers, 2)} map-get($spacers, 2) -.375rem 0;
+    font-size: $o-table-icon-size;
+    vertical-align: middle;
+  }
+
+  [class^="svg-"]::after {
+    width: inherit;
+    height: inherit;
+  }
+
+  .selected * {
+    background-color: $gray-400;
+  }
+
+  .custom-control {
+    display: inline-block;
+    margin: -.25rem 0 0;
+    line-height: 1;
+    vertical-align: middle;
+  }
+  // end mod
+
+  tbody + tbody {
+    border-top: (2 * $table-border-width) solid $table-border-color;
+  }
+}
+
+
+//
+// Condensed table w/ half padding
+//
+
+.table-sm {
+  th,
+  td {
+    padding: $table-cell-padding-y-sm $table-cell-padding-x-sm add($table-cell-padding-y-sm, 1px); // Boosted mod
+  }
+}
+
+// Boosted mod: no bordered neither borderless tables
+
+// Boosted mod: no Zebra-striping
+
+// Hover effect
+//
+// Placed here since it has to come after the potential zebra striping
+
+.table-hover {
+  tbody tr {
+    @include hover() {
+      color: $table-hover-color;
+      background-color: $table-hover-bg;
+    }
+  }
+}
+
+
+// Boosted mod: no Table backgrounds
+
+// Boosted mod: no thead backgrounds' variant
+
+
+.table-dark {
+  color: $table-dark-color;
+  background-color: $table-dark-bg;
+
+  // Boosted mod: only table rows have borders
+  tr,
+  th {
+    border-color: $table-dark-border-color;
+  }
+  // end mod
+
+  // Boosted mod: no bordered / borderless / zebra tables
+
+  &.table-hover {
+    tbody tr {
+      @include hover() {
+        color: $table-dark-hover-color;
+        background-color: $table-dark-hover-bg;
+      }
+    }
+  }
+}
+
+
+// Responsive tables
+//
+// Generate series of `.table-responsive-*` classes for configuring the screen
+// size of where your table will overflow.
+
+.table-responsive {
+  @each $breakpoint in map-keys($grid-breakpoints) {
+    $next: breakpoint-next($breakpoint, $grid-breakpoints);
+    $infix: breakpoint-infix($next, $grid-breakpoints);
+
+    &#{$infix} {
+      @include media-breakpoint-down($breakpoint) {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        // Boosted mod: no bordered tables
+      }
+    }
+  }
+}
+
+// Boosted mod
+.has-checkbox tr > :first-child {
+  width: $spacer;
+}
+// end mod

@@ -1,0 +1,204 @@
+// Base class
+//
+// Kickstart any navigation component with a set of style resets. Works with
+// `<nav>`s, `<ul>`s or `<ol>`s.
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: flex; // Boosted mod
+  padding: $nav-link-padding-y $nav-link-padding-x;
+  font-weight: $font-weight-bold; // Boosted mod
+  text-decoration: if($link-decoration == none, null, none);
+
+  @include hover-focus() {
+    text-decoration: none;
+  }
+
+  // Disabled state lightens text
+  &.disabled {
+    color: $nav-link-disabled-color;
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+//
+// Tabs
+//
+
+.nav-tabs {
+  border-bottom: $nav-tabs-border-width solid $nav-tabs-border-color;
+
+  .nav-item {
+    margin-bottom: -$nav-tabs-border-width;
+  }
+
+  // Boosted mod: margins between tabs on bigger screen
+  @include media-breakpoint-up(lg) {
+    .nav-item + .nav-item {
+      margin-left: .5rem;
+    }
+  }
+  // end mod
+
+  .nav-link {
+    padding: $navbar-padding-y map-get($spacers, 4); // Boosted mod
+    background: none; // Boosted mod
+    border: $nav-tabs-border-width solid transparent;
+    border-bottom-width: 0; // Boosted mod
+    outline-offset: map-get($spacers, 2); // Boosted mod
+
+    @include border-top-radius($nav-tabs-border-radius);
+
+    @include hover-focus() {
+      color: $nav-tabs-link-hover-color; // Boosted mod
+      background-color: $nav-tabs-link-hover-bg; // Boosted mod
+      border-color: $nav-tabs-link-hover-border-color;
+    }
+
+    &.disabled {
+      color: $nav-link-disabled-color;
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    // Boosted mod: show focus!
+    &:not(.disabled):focus {
+      outline: $nav-tabs-border-width solid $nav-tabs-link-hover-border-color;
+      outline-offset: -#{$nav-tabs-border-width};
+    }
+    // end mod
+  }
+
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    color: $nav-tabs-link-active-color;
+    background-color: $nav-tabs-link-active-bg;
+    border-color: $nav-tabs-link-active-border-color;
+  }
+
+  .dropdown-menu {
+    // Make dropdown border overlap tab border
+    margin-top: -$nav-tabs-border-width;
+    // Remove the top rounded corners here since there is a hard edge above the menu
+    @include border-top-radius(0);
+  }
+}
+
+// Boosted mod
+.nav-tabs-light {
+  padding-left: 0;
+  border-bottom: $nav-tabs-border-width / 2 solid $gray-600;
+
+  .nav-item {
+    margin-bottom: $nav-tabs-border-width / -2;
+  }
+
+  .nav-link  {
+    border-width: 0 0 $nav-tabs-border-width * 2;
+
+    @include hover-focus() {
+      color: $orange-2;
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    &.active {
+      border-color: transparent transparent $orange-2;
+    }
+
+    &:not(.disabled):focus {
+      outline-color: currentColor;
+    }
+  }
+}
+// end mod
+
+
+//
+// Pills
+//
+
+.nav-pills {
+  .nav-link {
+    @include border-radius($nav-pills-border-radius);
+
+    &:focus {
+      outline-offset: -#{$border-width};
+    }
+  }
+
+  .nav-link.active,
+  .show > .nav-link {
+    // stylelint-disable-next-line declaration-no-important
+    color: $nav-pills-link-active-color !important; // Boosted mod: prevent conflict with .navbar-dark
+    background-color: $nav-pills-link-active-bg;
+
+    // Boosted mod: show focus!
+    &:focus {
+      outline: $border-width solid $nav-pills-link-active-bg;
+    }
+    // end mod
+  }
+
+  // Boosted mod
+  .nav-item + .nav-item {
+    margin-left: map-get($spacers, 1);
+  }
+  // end mod
+}
+
+
+//
+// Justified variants
+//
+
+.nav-fill {
+  > .nav-link,
+  .nav-item {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+.nav-justified {
+  > .nav-link,
+  .nav-item {
+    flex-basis: 0;
+    flex-grow: 1;
+    text-align: center;
+  }
+}
+
+
+// Tabbable tabs
+//
+// Hide tabbable panes to start, show them when `.active`
+
+.tab-content {
+  // Boosted mod
+  padding: 1.125rem;
+  border: $nav-tabs-border-width solid;
+  border-top: 0;
+  // end mod
+
+  > .tab-pane {
+    display: none;
+  }
+  > .active {
+    display: block;
+  }
+}
+
+// Boosted mod
+.tab-pane > :last-child {
+  margin-bottom: 0;
+}
+// end mod

@@ -1,0 +1,50 @@
+//
+//  Footer
+//
+
+.o-footer {
+  margin-top: map-get($spacers, 4);
+  background-color: $black;
+
+  * {
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    line-height: $line-height-base;
+    color: $white;
+    letter-spacing: $letter-spacing-base;
+  }
+
+  > * ~ :not(:last-child) {
+    border-bottom: $border-width / 2 solid $gray-900;
+  }
+
+  .nav-link {
+    align-items: center;
+    padding: $nav-link-padding-y / 2 $nav-link-padding-x $nav-link-padding-y / 2 0;
+
+    &:hover,
+    &:focus {
+      color: $orange-2;
+    }
+
+    [class*="icon-"] {
+      margin-right: map-get($spacers, 1);
+      font-size: $h2-font-size;
+    }
+  }
+}
+
+.o-footer-top,
+.o-footer-body {
+  padding-top: map-get($spacers, 4);
+  padding-bottom: map-get($spacers, 4);
+}
+
+.o-footer-bottom {
+  padding-top: map-get($spacers, 3);
+  padding-bottom: map-get($spacers, 3);
+
+  * {
+    font-size: $font-size-sm;
+  }
+}

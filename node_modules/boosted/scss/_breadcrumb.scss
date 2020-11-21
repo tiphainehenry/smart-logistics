@@ -1,0 +1,50 @@
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  padding: $breadcrumb-padding-y $breadcrumb-padding-x;
+  margin-bottom: $breadcrumb-margin-bottom;
+  @include font-size($breadcrumb-font-size);
+  // Boosted mod
+  font-weight: $font-weight-bold;
+  line-height: $breadcrumb-line-height;
+  // end mod
+  list-style: none;
+  background-color: $breadcrumb-bg;
+  @include border-radius($breadcrumb-border-radius);
+}
+
+.breadcrumb-item {
+  display: flex;
+
+  a {
+    text-decoration: if($link-decoration == underline, null, underline); // Boosted mod: links are perceivable globally
+  }
+
+  // The separator between breadcrumbs (by default, a forward-slash: "/")
+  + .breadcrumb-item {
+    padding-left: $breadcrumb-item-padding;
+
+    &::before {
+      display: inline-block; // Suppress underlining of the separator in modern browsers
+      // Boosted mod
+      flex-shrink: 0;
+      align-self: center;
+      width: $breadcrumb-divider-width;
+      height: $breadcrumb-divider-height;
+      margin-right: map-get($spacers, 2);
+      content: "";
+      background-image: escape-svg($breadcrumb-divider);
+      background-repeat: no-repeat;
+
+      /* rtl:remove */
+      transform: rotate(180deg);
+
+      .bg-dark & {
+        background-image: escape-svg($breadcrumb-divider-dark);
+      }
+      // end mod
+    }
+  }
+
+  // Boosted mod: list markup is required
+}

@@ -1,0 +1,108 @@
+//
+// Carousel
+//
+
+.swiper-button-prev {
+  @extend .carousel-control-prev;
+  @extend .carousel-control-prev-icon;
+
+  /* rtl:raw:
+  transform: rotate(180deg);
+  */
+}
+
+.swiper-button-next {
+  @extend .carousel-control-next;
+  @extend .carousel-control-next-icon;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  top: subtract(50%, 10px) !important; // stylelint-disable-line declaration-no-important
+  @include transition($transition-focus);
+
+  &:focus {
+    outline: $border-width solid $input-focus-border-color;
+    outline-offset: -#{$border-width};
+  }
+}
+
+.swiper-pagination-bullet,
+.swiper-pagination-bullet-active {
+  width: map-get($spacers, 2);
+  height: map-get($spacers, 2);
+  border: 0;
+}
+
+.swiper-pagination-bullet {
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background: theme-color("primary");
+}
+
+.swiper-container {
+  width: 100% !important; // stylelint-disable-line declaration-no-important
+  margin-bottom: map-get($spacers, 4);
+  overflow: hidden;
+}
+
+.swiper-pagination {
+  bottom: 0;
+}
+
+.swiper-slide {
+  .card {
+    border: 0;
+  }
+
+  .card-img {
+    padding: 0;
+
+    img {
+      width: 100%;
+      height: auto;
+      max-height: 40vh;
+      object-fit: cover;
+    }
+  }
+
+  .card-body {
+    @extend .carousel-caption;
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none;
+  }
+
+  .swiper-container {
+    overflow-x: hidden;
+    overflow-y: visible;/* used for displaying pagination outside of container */
+  }
+
+  .swiper-slide {
+    width: 80%;
+
+    .card-img img {
+      height: auto;
+    }
+
+    .card-body {
+      position: static;
+    }
+  }
+
+  .swiper-container-horizontal > .swiper-pagination-bullets {
+    bottom: 0;
+  }
+
+  .swiper-pagination-bullet {
+    width: .5rem;
+    height: .5rem;
+    border: 0;
+  }
+}
