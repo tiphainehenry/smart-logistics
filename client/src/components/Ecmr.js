@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
  
 import Header from "./Header";
 import Footer from "./Footer";
+import EcmrCmp from "./EcmrCmp";
 
 class Ecmr extends React.Component {
 
@@ -249,23 +250,23 @@ class Ecmr extends React.Component {
 
   </div>
 
+    <EcmrCmp  consigneeETH={this.state.consigneeETH}
+              consignorETH={this.state.consignorETH}
+              carrierETH={this.state.carrierETH}
 
-     <div className="discovery-module-one-pop-out py-5 py-lg-3">
+              consigneeLoc={this.state.consigneeLoc}
+              consignorLoc={this.state.consignorLoc}
+              carrierLoc={this.state.carrierLoc}
 
-    <div className="container">  
-
-    <Button variant="primary" type="submit">
-      Option1: Generate onchain contract
-    </Button>
-
-    <Button variant="secondary" type="submit">
-      Option2: Generate IPFS contract, hash stored onchain
-    </Button>
-
-  </div>
-
-  </div>
-
+              takeover={this.state.takeover}
+              shipFrom={this.state.shipFrom}
+              shipTo={this.state.shipTo}
+              quantity={this.state.quantity}
+              nature={this.state.nature}
+              weight={this.state.weight}
+              volume={this.state.volume}
+              comments={this.state.comments}
+    />
   </div>
 
   <Footer/>

@@ -2,16 +2,9 @@ import React from 'react';
 import {Row, Col, Form, Button} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
-import DateRangePicker from 'react-bootstrap-daterangepicker';
-import 'bootstrap-daterangepicker/daterangepicker.css';
-
 import Elect from '../contracts/Elect.json';
 import getWeb3 from '../getWeb3';
 
-import axios from 'axios';
-
-import Header from "./Header";
-import Footer from "./Footer";
 import ResourceId from "./ResourceId";
 
 const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
