@@ -4,30 +4,30 @@ contract ECMR {
 
     // initialization of the ECMR 
     address  consigneeID;
-    int  consigneeLat;
-    int  consigneeLng;
+    string  consigneeLat;
+    string  consigneeLng;
     
     address  consignorID;
-    int  consignorLat;
-    int  consignorLng;
+    string  consignorLat;
+    string  consignorLng;
 
     address  carrierID;
-    int  carrierLat;
-    int  carrierLng;
+    string  carrierLat;
+    string  carrierLng;
 
-    int  shipFromLat;
-    int  shipFromLng;
+    string  shipFromLat;
+    string  shipFromLng;
 
-    int  shipToLat;
-    int  shipToLng;
+    string  shipToLat;
+    string  shipToLng;
 
     string  nature;
     uint  quantity;
     uint  grossWeight;
     uint  grossVolume;
 
-    uint  issuanceDate;
-    uint  takeoverDate;
+    string  issuanceDate;
+    string  takeoverDate;
 
     string[] comments;
 
@@ -57,22 +57,22 @@ contract ECMR {
     }
     
     
-    function getTenants() public view returns (address, int, int, address, int, int, address, int, int){
+    function getTenants() public view returns (address, string memory, string memory, address, string memory, string memory, address, string memory, string memory){
         return (consigneeID, consigneeLat, consigneeLng, 
                 consignorID, consignorLat, consignorLng,
                 carrierID, carrierLat, carrierLng);
     }
     
-    function getCommand() public view returns (int, int, int, int, string memory, uint, uint, uint, string[] memory, uint, uint){
+    function getCommand() public view returns (string memory, string memory, string memory, string memory, string memory, uint, uint, uint, string[] memory, string memory, string memory){
         return (shipFromLat, shipFromLng, shipToLat, shipToLng, 
                 nature, quantity, grossWeight, grossVolume,
                 comments, issuanceDate, takeoverDate);
     }
 
 
-    function initializeTenants(address _consigneeID, int _consigneeLat, int _consigneeLng,
-                                address _consignorID, int _consignorLat, int _consignorLng,
-                                address _carrierID, int _carrierLat, int _carrierLng) public payable {
+    function initializeTenants(address _consigneeID, string memory _consigneeLat, string memory _consigneeLng,
+                                address _consignorID, string memory _consignorLat, string memory _consignorLng,
+                                address _carrierID, string memory _carrierLat, string memory _carrierLng, string memory _issuanceDate) public payable {
                                     
         consigneeID = _consigneeID;
         consigneeLat = _consigneeLat;
@@ -87,12 +87,12 @@ contract ECMR {
         carrierLng = _carrierLng;
         
                                     
-        status.push(append(uint2str(now), 'initializedTenants', '', '', ''));
+        status.push(append(_issuanceDate, ': initializedTenants', '', '', ''));
     }
     
-    function initializeCommand( int _shipFromLat, int _shipFromLng, int _shipToLat, int _shipToLng,
+    function initializeCommand( string memory _shipFromLat, string memory _shipFromLng, string memory _shipToLat, string memory _shipToLng,
                                 string memory _nature, uint _quantity, uint _grossWeight, uint _grossVolume,
-                                string memory _newComment, uint _takeoverDate
+                                string memory _newComment, string memory _takeoverDate, string memory _issuanceDate
                                 ) public payable {
                                     
         shipFromLat = _shipFromLat;
@@ -106,16 +106,15 @@ contract ECMR {
         grossVolume = _grossVolume;
 
         takeoverDate = _takeoverDate;
-        
-        comments.push('[INFO] Initialization.');
+        issuanceDate = _issuanceDate;
         
         if(bytes(_newComment).length != bytes('').length) {
             comments.push(_newComment);
         } 
 
-        issuanceDate = now;
+        issuanceDate = _issuanceDate;
 
-        status.push(append(uint2str(issuanceDate), 'initializedCommand', '', '', ''));
+        status.push(append(_issuanceDate, ': initializedCommand', '', '', ''));
 
     }
     

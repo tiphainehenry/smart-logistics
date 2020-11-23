@@ -1,9 +1,9 @@
-const Hiring = artifacts.require("Hiring");
+const ECMR = artifacts.require("ECMR");
 const Elect = artifacts.require("Elect");
 
 
 module.exports = function(deployer) {
-  deployer.deploy(Hiring);
+  deployer.deploy(ECMR);
   deployer.deploy(Elect);
 
 };

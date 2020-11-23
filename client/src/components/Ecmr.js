@@ -4,12 +4,14 @@ import '../css/boosted.min.css';
 import '../css/App.css';
 
 
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import 'bootstrap-daterangepicker/daterangepicker.css';
  
 import Header from "./Header";
 import Footer from "./Footer";
 import EcmrCmp from "./EcmrCmp";
+
+
 
 class Ecmr extends React.Component {
 
@@ -21,14 +23,15 @@ class Ecmr extends React.Component {
       consignorETH:'0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8',
       carrierETH:'0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8',
 
-      consigneeLoc: '',
-      consignorLoc: '',
-      carrierLoc: '',
-
+      consigneeLoc: '140 Avenue de la République 92230 Chatillon',
+      consignorLoc:'55 Rue du Faubourg Saint-Honoré, 75008 Paris',
+      carrierLoc:'10 Place de la Concorde, 75008 Paris',
 
       takeover:'',
-      shipFrom:'',
-      shipTo:'',
+
+
+      shipFrom:'4 Rue du Clos Courtel, 35510 Cesson-Sévigné',
+      shipTo:'78 Rue Olivier de Serres, 75015 Paris',
       quantity:'',
       nature:'',
       weight:'',
@@ -62,11 +65,14 @@ class Ecmr extends React.Component {
     var today = new Date();
     var date =  (today.getMonth() + 1) + '/' + today.getDate() + '/' +  today.getFullYear();
 
-    this.setState({'startDate':Date.parse(date.toString())});
+    this.setState({'takeover':date.toString()});
 
   }
-  handleTakeover(e) {
-    this.setState({startDate:e});
+
+  handleTakeover = (e) =>{
+    e.preventDefault();
+    console.log(e.target.value);
+    this.setState({takeover:e.target.value});
   }
 
   handleShipFromLoc(e) {
@@ -147,7 +153,7 @@ class Ecmr extends React.Component {
               <Form.Group controlId="formGridAddress1">
               <Form.Label>Location</Form.Label>
               <Row>
-                <Col sm={10}><Form.Control onChange={this.handleConsigneeLoc} value={this.state.consigneeLoc}  /></Col>
+                <Col ><Form.Control onChange={this.handleConsigneeLoc} value={this.state.consigneeLoc}  /></Col>
               </Row>
             </Form.Group>
           </Form.Group>
@@ -161,7 +167,7 @@ class Ecmr extends React.Component {
               <Form.Group controlId="formGridAddress1">
               <Form.Label>Location</Form.Label>
               <Row>
-                <Col sm={10}><Form.Control onChange={this.handleConsignorLoc} value={this.state.consignorLoc}  /></Col>
+                <Col ><Form.Control onChange={this.handleConsignorLoc} value={this.state.consignorLoc}  /></Col>
               </Row>
             </Form.Group>
           </Form.Group>
@@ -175,7 +181,7 @@ class Ecmr extends React.Component {
               <Form.Group controlId="formGridAddress1">
               <Form.Label>Location</Form.Label>
               <Row>
-                <Col sm={10}><Form.Control onChange={this.handleCarrierLoc} value={this.state.carrierLoc}  /></Col>
+                <Col ><Form.Control onChange={this.handleCarrierLoc} value={this.state.carrierLoc}  /></Col>
               </Row>
             </Form.Group>
           </Form.Group>
@@ -185,15 +191,14 @@ class Ecmr extends React.Component {
   <Tab eventKey="command" title="Command Information">
   <Form>
 
-  <Form.Group>
-    <Form.Label>Date of takeover</Form.Label>
-      <Form.Group controlId="formBasicEmail">
-        <DatePicker className="form-control" 
-        selected={this.state.startDate} 
-        value={this.state.startDate} 
-        onChange={this.handleTakeover}  />    
-      </Form.Group>
+  <Form.Group controlId="formBasicEmail">
+      <Form.Label>When?</Form.Label>
+      <DateRangePicker onApply={this.handleTakeover}  startDate="1/1/2014" endDate="3/1/2014">
+        <input type="text" className="form-control" />
+      </DateRangePicker>
   </Form.Group>
+
+
 
   <hr/><br/>
     <Form.Group controlId="formBasicEmail">
@@ -215,7 +220,7 @@ class Ecmr extends React.Component {
 
   <Form.Group controlId="formGridEmail">
     <Form.Label>Nature</Form.Label>
-    <Form.Control type="address" placeholder="nature" value={this.state.nature} onChange={this.handleNature}/>
+    <Form.Control type="address" placeholder="nature" value={this.state.nature}  onChange={this.handleNature}/>
   </Form.Group>
 
     <Form.Group controlId="exampleForm.ControlSelect1">
