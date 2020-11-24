@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Card, Tab, Tabs, Table, Row, Col, Form, Button} from 'react-bootstrap';
+import {Card, ListGroup, Tab, Tabs, Table, Row, Col, Form, Button} from 'react-bootstrap';
 import '../css/boosted.min.css';
 import '../css/App.css';
 
@@ -157,8 +157,10 @@ class EcmrCmp extends React.Component {
         const status = await this.state.contract.methods.getStatus().call();
     
         console.log(command);
+
+
   
-        this.setState({'command': command, 'tenants':tenants, 'status':status.split(' ')});
+        this.setState({'command': command, 'tenants':tenants, 'status':status});
 
     }
 
@@ -193,12 +195,19 @@ class EcmrCmp extends React.Component {
     <hr/>
 
     {(this.state.command!=[])?     <Card style={{height:'90%','marginTop':'3vh'}}>
-      <Card.Body >
-                <Row>
+      <Card.Header>
+        
+      <Row>
       <Col sm={3}><h4>Status</h4></Col>
-      <Col sm={8}>{this.state.status.map(e=>e + " ")}</Col>
+      <Col sm={8}>{this.state.status.map(e=><p>{e}</p>)}</Col>
     </Row>
-    <hr/>
+      </Card.Header>
+      
+      
+      <Card.Body >
+
+    <ListGroup variant="flush">
+    <ListGroup.Item>             
     <Row>
       <Col sm={3}><h4>Issuance date</h4></Col>
       <Col sm={8}>{this.state.command[9]}</Col>
@@ -208,8 +217,22 @@ class EcmrCmp extends React.Component {
       <Col sm={3}><h4>Takeover date</h4></Col>
       <Col sm={8}>{this.state.command[10]}</Col>
     </Row>
-    <hr/>
+</ListGroup.Item>
+
+<ListGroup.Item>
+<Row>
+      <Col sm={3}><h4>Ship From</h4></Col>
+      <Col sm={8}>({this.state.command[0]},{this.state.command[1]})</Col>
+    </Row>    <hr/>
+
     <Row>
+      <Col sm={3}><h4>Ship To</h4></Col>
+      <Col sm={8}>({this.state.command[2]},{this.state.command[3]})</Col>
+    </Row>    
+    </ListGroup.Item>
+
+
+    <ListGroup.Item>    <Row>
       <Col sm={3}><h4>Consignee Account</h4></Col>
       <Col sm={8}>{this.state.tenants[0]}</Col>
     </Row>
@@ -238,17 +261,8 @@ class EcmrCmp extends React.Component {
     <Row>
       <Col sm={3}><h4>Carrier Location</h4></Col>
       <Col sm={8}>({this.state.tenants[7]},{this.state.tenants[8]})</Col>
-    </Row>    <hr/>
-
-    <Row>
-      <Col sm={3}><h4>Ship From</h4></Col>
-      <Col sm={8}>({this.state.command[0]},{this.state.command[1]})</Col>
-    </Row>    <hr/>
-
-    <Row>
-      <Col sm={3}><h4>Ship To</h4></Col>
-      <Col sm={8}>({this.state.command[2]},{this.state.command[3]})</Col>
-    </Row>    <hr/>
+    </Row>    </ListGroup.Item>
+    <ListGroup.Item>    
 
     <Row>
       <Col sm={3}><h4>Nature</h4></Col>
@@ -269,12 +283,13 @@ class EcmrCmp extends React.Component {
       <Col sm={3}><h4>Gross Volume (m3)</h4></Col>
       <Col sm={8}>{this.state.command[7]}</Col>
     </Row>    <hr/>
-
     <Row>
       <Col sm={3}><h4>Comments</h4></Col>
       <Col sm={8}>{this.state.command[8]}</Col>
     </Row>
-    <hr/>
+
+    </ListGroup.Item>
+  </ListGroup>
       </Card.Body>
     </Card>
 

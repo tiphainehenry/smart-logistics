@@ -6,9 +6,11 @@ import Elect from '../contracts/Elect.json';
 import getWeb3 from '../getWeb3';
 
 import ResourceId from "./ResourceId";
+import axios from 'axios';
 
 const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
 const openrouteservice = require("../../package.json")["openrouteservice"];
+
 
 var candidates = require("../resources.json");
 
@@ -30,13 +32,17 @@ class RequestCmp extends React.Component {
       cdd:[],
       bcCandidates:[], 
       testState:'',
-      matchingIds:[]
+      matchingIds:[],
+      toOptim:[]
 
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.updCandidates = this.updCandidates.bind(this);
     this.computeProfileMatrix = this.computeProfileMatrix.bind(this);
+    this.handleSubmitBC = this.handleSubmitBC.bind(this);
+    this.handleResultBC = this.handleResultBC.bind(this);
+    this.askSCSort = this.askSCSort.bind(this);
+
   };
   
   componentWillMount() {
@@ -122,42 +128,112 @@ class RequestCmp extends React.Component {
     };
   }
 
-  async handleSubmit(e){
-    // call sorting function smart contract
-    e.preventDefault()
-
+  async handleSubmitBC(e){
+    e.preventDefault();
     if(this.props.availability !=''){
+
+      // AVAILABILITY
       var splAvailability = this.props.availability.split(' ');   
       var start = splAvailability[0].split('/');
       var end = splAvailability[2].split('/');
       var date = [start[1], start[0],start[2]%100, end[1], end[0],end[2]%100];
     
+      // EQUIPMENT
       var filteringAttributes = [this.props.equipment1,this.props.equipment2,this.props.equipment3];
 
-      await this.state.contract.methods.filter(
-        filteringAttributes,
-        date
-      ).send({ from: this.state.accounts[0] });    
+      console.log(filteringAttributes);
+      this.setState({'date':date, 'filteringAttributes':filteringAttributes});
 
-    }
+    
+      // DISTANCE.DURATION
+      if(this.state.pickupAddress != ''){
+        axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
+          (response) => { 
+              var result = response.data; 
 
-    else{
-      alert('Availability missing, please fill it in.')
-    }
+              var pickupCoordsLat = result['results'][0]['locations'][0]['displayLatLng'].lat;
+              var pickupCoordsLng = result['results'][0]['locations'][0]['displayLatLng'].lng;
 
-    var cdd  = await this.state.contract.methods.getFilteredCandidates().call();
+              this.setState({pickupCoords:{
+                lat:pickupCoordsLat,
+                lng:pickupCoordsLng}});
 
-    var indices = cdd.map((e, i) => e === '1' ? i : '').filter(String)
-    this.setState({'cdd':cdd,'matchingIds':indices});
 
-    if (cdd.includes(1)){
-      this.setState({hasCandidates:true});
-    }
-    else{
-      this.setState({hasCandidates:false});
-    } 
+              var locationList = [[pickupCoordsLng, pickupCoordsLat]];
+              for(var i=0; i<candidates.length; i++){
+                  locationList.push([candidates[i].long, candidates[i].lat]);
+              }  
+          
+              console.log(locationList);  
+              axios.post("https://api.openrouteservice.org/v2/matrix/driving-car",{locations:locationList, sources:[0],"metrics":["distance","duration"]},{
+                  headers: {Authorization: openrouteservice}
+                 }).then( 
+                  (response) => { 
+                      var result = response.data; 
+                      if(this.props.optimChoice == "Duration"){
+                        var toOptim = result["durations"][0];
+                      }
+                      else{
+                        var toOptim = result["distances"][0];
+                      }
+                      this.setState({'toOptim':toOptim});
+          
+                      console.log(toOptim);
+                      this.askSCSort();
+                  }, 
+                  (error) => { 
+                      console.log(error); 
+                  }) 
+          }, 
+          (error) => { 
+              console.log(error); 
+          } 
+      );     
+      }
+      else{
+        alert('Fill in the pickup address');
+      }
+
+      }
+
+      else{
+        alert('Availability missing, please fill it in.')
+      }
+
+    this.handleResultBC();
 
   }
+
+
+  async askSCSort(){
+    // call sorting function smart contract
+
+    console.log(this.state.filteringAttributes);
+    console.log(this.state.date);
+
+    await this.state.contract.methods.filter(
+      this.state.filteringAttributes,
+      this.state.date
+    //  this.state.toOptim
+    ).send({ from: this.state.accounts[0] });    
+    
+  }
+
+  async handleResultBC(e){
+      var cdd  = await this.state.contract.methods.getFilteredCandidates().call();
+
+      var indices = cdd.map((e, i) => e === '1' ? i : '').filter(String)
+      this.setState({'cdd':cdd,'matchingIds':indices});
+  
+    
+      if (cdd.includes(1)){
+        this.setState({hasCandidates:true});
+      }
+      else{
+        this.setState({hasCandidates:false});
+      } 
+        
+    }
 
   updCandidates(e){
     e.preventDefault();
@@ -170,15 +246,13 @@ class RequestCmp extends React.Component {
     
     return <div>
 
-    <Button variant="primary" type="submit" onClick={this.handleSubmit}>
+    <Button variant="primary" type="submit" onClick={this.handleSubmitBC}>
       Filter (sort to be implemented)
     </Button>
 
     <Button variant="secondary" type="submit" onClick={this.updCandidates}>
       Update list of candidates
     </Button>
-
-
 
   {hasCandidates?    
                   <div className="album py-5 bg-yellow">
@@ -196,32 +270,6 @@ class RequestCmp extends React.Component {
                               </div>  
                             </div>  
     }
-
-  <div className="album py-5 bg-light">
-    <div className="container">            
-        <h2>BC candidates</h2>
-            [
-              {this.state.bcCandidates.map(item=> 
-                      <div className="row">[{item[0]},{item[1]},{item[2]},{item[3]},{item[4]},{item[5]},{item[6]},{item[7]},{item[8]},{item[9]}]</div>
-                )}
-            ]
-
-        <h2>Filtered resources</h2>
-        <div className="row">
-            {this.state.cdd.map(item=> 
-                      <p>{item} </p>
-                )}
-        </div>
-
-        <h2>Test state</h2>
-        <div className="row">
-            {this.state.testState}
-        </div>
-
-        
-      </div>
-  </div>
-
 
   </div>;
   }};

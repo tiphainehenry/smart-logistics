@@ -43,17 +43,17 @@ class Request extends React.Component {
       equipment2:0,
       equipment3:0,
 
+      optimChoice:"Duration"
+
 
     };
     this.handlePickupChange = this.handlePickupChange.bind(this);
-    this.handlePickupLatLong = this.handlePickupLatLong.bind(this);
     this.handleDeliveryChange = this.handleDeliveryChange.bind(this);
-    this.handleDeliveryLatLong = this.handleDeliveryLatLong.bind(this);
     this.handleAvailability = this.handleAvailability.bind(this);
     this.handleEquipment1 = this.handleEquipment1.bind(this);
     this.handleEquipment2 = this.handleEquipment2.bind(this);
     this.handleEquipment3 = this.handleEquipment3.bind(this);
-
+    this.handleOptimChoice = this.handleOptimChoice.bind(this);
   };
 
 
@@ -67,43 +67,10 @@ class Request extends React.Component {
     this.setState({deliveryAddress:e.target.value});
   }
 
-  handlePickupLatLong = (e) => {
+
+  handleOptimChoice= (e) =>{
     e.preventDefault();
-    if(this.state.pickupAddress != ''){
-      axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
-        (response) => { 
-            var result = response.data; 
-            this.setState({pickupCoords:{
-              lat:result['results'][0]['locations'][0]['displayLatLng'].lat,
-              lng:result['results'][0]['locations'][0]['displayLatLng'].lng}});
-        }, 
-        (error) => { 
-            console.log(error); 
-        } 
-    );     
-    }
-    else{
-      alert('Fill in the pickup address');
-    }
-  }
-  handleDeliveryLatLong = (e) => {
-    e.preventDefault();
-    if(this.state.deliveryAddress != ''){
-      axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.deliveryAddress).then( 
-        (response) => { 
-            var result = response.data; 
-            this.setState({deliveryCoords:{
-              lat:result['results'][0]['locations'][0]['displayLatLng'].lat,
-              lng:result['results'][0]['locations'][0]['displayLatLng'].lng}});
-        }, 
-        (error) => { 
-            console.log(error); 
-        } 
-    );     
-    }
-    else{
-      alert('Fill in the delivery address');
-    }
+    this.setState({optimChoice:e.target.value});
   }
 
 
@@ -185,11 +152,7 @@ class Request extends React.Component {
     <Form.Group controlId="formBasicEmail">
       <Form.Group controlId="formGridAddress1">
       <Form.Label>Pickup address</Form.Label>
-      <Row>
-        <Col sm={10}><Form.Control onChange={this.handlePickupChange} value={this.state.pickupAddress}  /></Col>
-        <Col><Button onClick={this.handlePickupLatLong}>Ok</Button></Col>
-      </Row>
-      <Form.Text>Retrieved coordinates: ({this.state.pickupCoords.lat},{this.state.pickupCoords.lng})</Form.Text>
+      <Form.Control onChange={this.handlePickupChange} value={this.state.pickupAddress}  />
     </Form.Group>
   </Form.Group>
   <hr/><br/>
@@ -197,11 +160,7 @@ class Request extends React.Component {
   <Form.Group controlId="formBasicEmail">
       <Form.Group controlId="formGridAddress1">
       <Form.Label>Delivery address</Form.Label>
-      <Row>
-        <Col sm={10}><Form.Control onChange={this.handleDeliveryChange} value={this.state.deliveryAddress}  /></Col>
-        <Col><Button onClick={this.handleDeliveryLatLong}>Ok</Button></Col>
-      </Row>
-      <Form.Text>Retrieved coordinates: ({this.state.deliveryCoords.lat},{this.state.deliveryCoords.lng})</Form.Text>
+      <Form.Control onChange={this.handleDeliveryChange} value={this.state.deliveryAddress}  />
     </Form.Group>
   </Form.Group>
 
@@ -211,21 +170,28 @@ class Request extends React.Component {
 
       <Form.Group controlId="exampleForm.ControlSelect1">
           <Form.Label>Optimize on</Form.Label>
-          <Form.Control as="select">
-            <option>Duration</option>
-            <option>Distance</option>
+          <Form.Control as="select" value={this.state.optimChoice} onChange={this.handleOptimChoice}>
+            <option value="Duration">Duration</option>
+            <option value="Distance">Distance</option>
+
           </Form.Control>
         </Form.Group>
       </Form.Group>
 
       <Form.Group controlId="formBasicRange">
-        <Form.Label>Delay acceptance</Form.Label>
+        <Form.Label>Penalize delay</Form.Label>
         <Form.Control type="range" />
       </Form.Group>
       <Form.Group controlId="formBasicRange">
-        <Form.Label>Critair</Form.Label>
+        <Form.Label>Penalize carbon footprint</Form.Label>
         <Form.Control type="range" />
       </Form.Group>
+      <Form.Group controlId="formBasicRange">
+        <Form.Label>Favor Experience</Form.Label>
+        <Form.Control type="range" />
+      </Form.Group>
+
+      <hr/><br/>
 
 
     <Form.Group controlId="exampleForm.ControlSelect2">
@@ -258,6 +224,7 @@ class Request extends React.Component {
                 equipment1={this.state.equipment1}
                 equipment2={this.state.equipment2}
                 equipment3={this.state.equipment3}
+                optimChoice={this.state.optimChoice}
     />
 
   </div>
