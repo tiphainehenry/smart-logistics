@@ -1,0 +1,77 @@
+% Preamble
+\documentclass{beamer}
+
+% Packages
+\usetheme{metropolis}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{comment}
+
+% Document
+\title{Développement d'une marketplace décentralisée basée sur la blockchain}
+\date{}
+\author{Shihui Huang \& Bastien Sun\\Tiphaine Henry \& Walid Gaaloul}
+\begin{document}
+
+    \maketitle
+
+    \begin{frame}{Diagramme de cas d'utilisation}
+        \centering
+        \includegraphics[height = .95\textheight]{use_case_diagram.png}
+    \end{frame}
+
+    \begin{frame}{Diagramme de classe}
+        \centering
+        \includegraphics[height = .95\textheight]{class_diagram.png}
+    \end{frame}
+
+    \section{Structure de l'interface web}
+
+    \begin{frame}{Page d'accueil}
+        \begin{columns}[]
+            \begin{column}[t]{.5\linewidth}
+                \begin{itemize}[<+- | alert@+>]
+                    \item Propriétaire :
+                    \begin{itemize}
+                        \item Créer une demande de livraison
+                        \item Lister les services de livraison
+                    \end{itemize}
+                \end{itemize}
+            \end{column}
+            \begin{column}[t]{.5\linewidth}
+                \begin{itemize}[<+- | alert@+>]
+                    \item Livreur :
+                    \begin{itemize}
+                        \item Proposer un service de livraison
+                        \item Lister les demandes de livraison
+                    \end{itemize}
+                \end{itemize}
+            \end{column}
+        \end{columns}
+    \end{frame}
+
+    \begin{frame}{Détail d'un livraison}
+        \begin{columns}
+            \begin{column}{.5\linewidth}
+                \begin{itemize}[<+- | alert@+>]
+                    \item Propriétaire :
+                    \begin{itemize}
+                        \item Liste d'informations
+                        \item Embaucher le livreur
+                    \end{itemize}
+                \end{itemize}
+            \end{column}
+            \begin{column}{.5\linewidth}
+                \begin{itemize}[<+- | alert@+>]
+                    \item Livreur :
+                    \begin{itemize}
+                        \item Liste d'informations
+                        \item Sélectionner la livraison
+                    \end{itemize}
+                \end{itemize}
+            \end{column}
+        \end{columns}
+    \end{frame}
+\end{document}
