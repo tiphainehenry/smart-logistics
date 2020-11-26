@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Propriétaire d'un magasin\n(consommateur de services)" as proprietaire
+actor "Livreur\n(fournisseur de services)" as livreur
+rectangle "Smart Logistics" {
+proprietaire -- (Parcourir la liste des service de livraison)
+proprietaire -- (Créer une demande de livraison)
+proprietaire -- (Embaucher manuellement un livreur)
+proprietaire -- (Embaucher automatiquement un livreur)
+proprietaire -- (Accepter ou refuser un contrat de livraison)
+livreur -- (Parcourir la liste des demandes de livraison)
+livreur -- (Proposer un service de livraison)
+livreur -- (Sélectionner une demande de livraison)
+livreur -- (Accepter ou refuser un contrat de livraison)
+@enduml
