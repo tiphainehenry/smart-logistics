@@ -16,6 +16,8 @@
     "lite-server": "^2.3.0"
   },
   "dependencies": {
-    "create-react-app": "^4.0.0"
+    "create-react-app": "^4.0.0",
+    "ganache-cli": "^6.12.1",
+    "truffle": "^5.1.54"
   }
 }
