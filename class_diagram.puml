@@ -1,0 +1,76 @@
+@startuml
+class Hiring {
+    - employers : address[]
+
+    + hire(int livreurId) : int
+    + getEmployers() : address[]
+}
+
+
+class "DeliveryPerson" as Livreur {
+    - id : string
+    - surname : string
+    - firstName : string
+    - photo : string
+
+    + offerDeliveryService() : void
+}
+
+
+class "StoreOwner" as Employer {
+    - id : string
+    - surname : string
+    - firstName : string
+    - photo : string
+
+    + launchDeliveryRequest() : void
+}
+
+
+class DeliveryContract {
+    - int issuanceDate : int
+    - int takeoverDate : int
+    - carrierAddress : address
+    - shipperAddress : address
+    - nature : string
+    - quantity : int
+    - grossWeight : int
+    - grossVolume : int
+    - takeoverAddress : string
+    - delieryAddress : string
+
+    + getDelivery() : DeliveryContract
+    + setDelivery() : void
+}
+
+
+class DeliveryRequest {
+    - availabilityStart : date
+    - availabilityEnd : date
+    - truckEquipmentRequest : string
+    - pickupAddress : string
+    - deliveryAddress : string
+    - delayAcceptance : int
+    - qualityDelivery : int
+    - corporateSocialResponsibility : int
+    - incentives : int
+    - tips : int
+}
+
+
+class DeliveryOffer {
+    - availabilityStart : date
+    - availabilityEnd : date
+    - warehouseLocation : string
+    - truckEquipment : string
+    - maxCautionAccepted : int
+}
+
+
+Hiring o-- DeliveryContract
+Employer --o "0..*" Hiring
+Hiring o-- "0..*" Livreur
+
+Employer --"0..*" DeliveryRequest
+Livreur --"0..*" DeliveryOffer
+@enduml
