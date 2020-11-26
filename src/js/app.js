@@ -62,6 +62,16 @@ App = {
             return App.markHired();
         });
 
+        $.getJSON('DeliveryContract.json', function (data) {
+            // Get the necessary contract artifact file and instantiate it with @truffle/contract
+            App.contracts.DeliveryContract = TruffleContract(data);
+
+            // Set the provider for our contract
+            App.contracts.DeliveryContract.setProvider(App.web3Provider);
+
+            // Use our contract to retrieve and mark the hired resources
+             App.getDeliveryContract();
+        });
 
         return App.bindEvents();
     },
@@ -114,8 +124,24 @@ App = {
             });
         });
 
-    }
+    },
 
+    getDeliveryContract: function() {
+        App.contracts.DeliveryContract.deployed().then(instance => instance.getDeliveryContract())
+            .then(function (delivery) {
+                document.querySelector("#issuanceDate").setAttribute("value", `${delivery[0]['c'][0]}`);
+                document.querySelector("#takeoverDate").setAttribute("value", `${delivery[1]['c'][0]}`);
+                document.querySelector("#carrierAddress").setAttribute("value", `${delivery[2]}`);
+                document.querySelector("#shipperAddress").setAttribute("value", `${delivery[3]}`);
+                document.querySelector("#nature").setAttribute("value", `${delivery[4]}`);
+                document.querySelector("#quantity").setAttribute("value", `${delivery[5]['c'][0]}`);
+                document.querySelector("#grossWeight").setAttribute("value", `${delivery[6]['c'][0]}`);
+                document.querySelector("#grossVolume").setAttribute("value", `${delivery[7]['c'][0]}`);
+                document.querySelector("#takeoverAddress").setAttribute("value", `${delivery[8]}`);
+                document.querySelector("#deliveryAddress").setAttribute("value", `${delivery[9]}`);
+            })
+            .catch(err => console.log(err));
+    }
 };
 
 $(function () {
