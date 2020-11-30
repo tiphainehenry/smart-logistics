@@ -74,10 +74,18 @@ class RequestCmp extends React.Component {
       for(var eqId=0; eqId < elem.equipment.length;eqId++){
         candidate.push(elem.equipment[eqId].equip_id);
       }
+
+      /// sorting criteria: delay, experience, carbon, duration
+
+      candidate.push(elem["nbDelayTime(min)"]);
+      candidate.push(elem["nbServices"]);
+
       candidateMatrix.push(candidate);
+
     }
 
     console.log(this.state.candidateMatrix);
+    alert(this.state.candidateMatrix);
 
     this.setState({'candidateMatrix':candidateMatrix});
   }
@@ -145,6 +153,8 @@ class RequestCmp extends React.Component {
       this.setState({'date':date, 'filteringAttributes':filteringAttributes});
 
     
+      // SORTING RATIOS  
+
       // DISTANCE.DURATION
       if(this.state.pickupAddress != ''){
         axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
@@ -170,22 +180,20 @@ class RequestCmp extends React.Component {
                  }).then( 
                   (response) => { 
                       var result = response.data; 
-                      if(this.props.optimChoice == "Duration"){
-                        var toOptim = result["durations"][0];
-                      }
-                      else{
-                        var toOptim = result["distances"][0];
-                      }
-                      this.setState({'toOptim':toOptim});
-          
-                      var ratio = Math.max.apply(Math, toOptim) / 100;
-                      var l = toOptim.length;
-                      var i;
 
-                      for (i = 0; i < l; i++) {
-                        toOptim[i] = Math.round(toOptim[i] / ratio);
-                      }
-                      console.log(toOptim);
+                      var dists = result["durations"][0];
+                      var durations = result["distances"][0];
+                      this.setState({'dists':dists, 'durations':durations});
+          
+                      //var ratio = Math.max.apply(Math, dists) / 100;
+                      //var l = dists.length;
+                      //var i;
+
+                      //for (i = 0; i < l; i++) {
+                      //  dists[i] = Math.round(dists[i] / ratio);
+                      //}
+
+                      console.log(dists);
                       this.askSCSort();
                   }, 
                   (error) => { 
@@ -217,10 +225,15 @@ class RequestCmp extends React.Component {
     console.log(this.state.filteringAttributes);
     console.log(this.state.date);
 
-    await this.state.contract.methods.filter(
+    console.log(this.props.optimRatios);    
+    alert(this.props.optimRatios);
+
+    await this.state.contract.methods.elect(
       this.state.filteringAttributes,
-      this.state.date
-    //  this.state.toOptim
+      this.props.optimRatios,
+      this.state.date,
+      this.state.dists, //call oracle?
+      this.state.durations //call oracle?
     ).send({ from: this.state.accounts[0] });    
     
   }
@@ -253,7 +266,7 @@ class RequestCmp extends React.Component {
     return <div>
 
     <Button variant="primary" type="submit" onClick={this.handleSubmitBC}>
-      Filter (sort to be implemented)
+      Filter and Sort 
     </Button>
 
     <Button variant="secondary" type="submit" onClick={this.updCandidates}>

@@ -43,8 +43,10 @@ class Request extends React.Component {
       equipment2:0,
       equipment3:0,
 
-      optimChoice:"Duration"
-
+      delayRatio:50,
+      carbonRatio:50,
+      experienceRatio:50,
+      durationRatio:50
 
     };
     this.handlePickupChange = this.handlePickupChange.bind(this);
@@ -53,8 +55,39 @@ class Request extends React.Component {
     this.handleEquipment1 = this.handleEquipment1.bind(this);
     this.handleEquipment2 = this.handleEquipment2.bind(this);
     this.handleEquipment3 = this.handleEquipment3.bind(this);
-    this.handleOptimChoice = this.handleOptimChoice.bind(this);
+
+    this.handleDelayRatio = this.handleDelayRatio.bind(this);
+    this.handleCarbonRatio = this.handleCarbonRatio.bind(this);
+    this.handleExperienceRatio = this.handleExperienceRatio.bind(this);
+    this.handleDurationRatio = this.handleDurationRatio.bind(this);
+
   };
+
+  handleCarbonRatio = (e) =>{
+    e.preventDefault();
+    this.setState({carbonRatio:e.target.value});
+
+    console.log(e.target.value);
+  }
+  handleExperienceRatio = (e) =>{
+    e.preventDefault();
+    this.setState({experienceRatio:e.target.value});
+
+    console.log(e.target.value);
+  }
+
+  handleDelayRatio = (e) =>{
+    e.preventDefault();
+    this.setState({delayRatio:e.target.value});
+
+    console.log(e.target.value);
+  }
+  handleDurationRatio = (e) =>{
+    e.preventDefault();
+    this.setState({durationRatio:e.target.value});
+
+    console.log(e.target.value);
+  }
 
 
   handlePickupChange = (e) =>{
@@ -67,11 +100,6 @@ class Request extends React.Component {
     this.setState({deliveryAddress:e.target.value});
   }
 
-
-  handleOptimChoice= (e) =>{
-    e.preventDefault();
-    this.setState({optimChoice:e.target.value});
-  }
 
 
   handleAvailability = (e) =>{
@@ -114,7 +142,8 @@ class Request extends React.Component {
     <div className="discovery-module-one-pop-out py-5 py-lg-3">
     <div className="container">
 
-    <h1>Fill in this form to find the right resource for your needs.</h1>
+    <h1>A Smart-Contract for Delocated Resource Matching.</h1> 
+    <p>Fill in this form to find the right resource for your needs.</p>
     <hr/><br/>
 
     <Form>
@@ -166,29 +195,21 @@ class Request extends React.Component {
 
   <hr/><br/>
 
-    <Form.Group controlId="formBasicEmail">
-
-      <Form.Group controlId="exampleForm.ControlSelect1">
-          <Form.Label>Optimize on</Form.Label>
-          <Form.Control as="select" value={this.state.optimChoice} onChange={this.handleOptimChoice}>
-            <option value="Duration">Duration</option>
-            <option value="Distance">Distance</option>
-
-          </Form.Control>
-        </Form.Group>
-      </Form.Group>
-
       <Form.Group controlId="formBasicRange">
-        <Form.Label>Penalize delay</Form.Label>
-        <Form.Control type="range" />
+        <Form.Label>Delay acceptance</Form.Label>
+        <Form.Control onChange={this.handleDelayRatio} value={this.state.delayRatio} type="range" />
       </Form.Group>
       <Form.Group controlId="formBasicRange">
-        <Form.Label>Penalize carbon footprint</Form.Label>
-        <Form.Control type="range" />
+        <Form.Label>Max Experience</Form.Label>
+        <Form.Control onChange={this.handleExperienceRatio} value={this.state.experienceRatio} type="range" />
       </Form.Group>
       <Form.Group controlId="formBasicRange">
-        <Form.Label>Favor Experience</Form.Label>
-        <Form.Control type="range" />
+        <Form.Label>Min Distance</Form.Label>
+        <Form.Control onChange={this.handleCarbonRatio} value={this.state.carbonRatio} type="range" />
+      </Form.Group>
+      <Form.Group controlId="formBasicRange">
+        <Form.Label>Min Duration</Form.Label>
+        <Form.Control onChange={this.handleDurationRatio} value={this.state.durationRatio} type="range" />
       </Form.Group>
 
       <hr/><br/>
@@ -224,7 +245,9 @@ class Request extends React.Component {
                 equipment1={this.state.equipment1}
                 equipment2={this.state.equipment2}
                 equipment3={this.state.equipment3}
-                optimChoice={this.state.optimChoice}
+
+                optimRatios= {[this.state.delayRatio, this.state.experienceRatio, this.state.carbonRatio, this.state.durationRatio]} 
+
     />
 
   </div>

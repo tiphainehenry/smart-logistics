@@ -34,6 +34,7 @@ contract Elect {
     
     string testState;
 
+    uint[] candidate;
     uint[][] candidates;
 
     bool hasCandidates = false;
@@ -228,43 +229,50 @@ contract Elect {
         // emit event
     }
 
+    //////// main
 
-
-
-    //////// Global Filtering
-
-    function filter(uint[] memory filteringAttributes, uint[] memory alphas, uint[] memory availability) public payable{
+    function elect(uint[] memory filteringAttributes, uint[] memory alphas, uint[] memory availability, uint[] memory distances, uint[] memory durations) public payable{
         
+
+        // proceed to filtering
         uint[] memory _filteredCandidates = new uint[](candidates.length);
         // reinitialize list of candidates
         for(uint i=0; i<candidates.length;i++){
             _filteredCandidates[i]=0;
         }
 
-        for(uint ind=0; ind<candidates.length; ind++){
-            uint[] memory person=candidates[ind];
+        for(uint ind=0; ind<candidates.length; ind++){ // test all candidates
+            candidate.length = 0;
+
+            candidate = candidates[ind];
+            candidate.push(distances[ind]);
+            candidate.push(durations[ind]);
             bool testOutput = true;
 
             // filter on  attributes
             uint index=0;
-            for(uint id_att=7; id_att<person.length; id_att++){
-                if((filteringAttributes[index]==1) && (person[id_att]!=1)){
+
+            uint filterMaxInd = 7 + filteringAttributes.length;
+
+            for(uint id_att=7; id_att<filterMaxInd; id_att++){
+                if((filteringAttributes[index]==1) && (candidate[id_att]!=1)){
                         testOutput=false;
                 }
                 index++;
             }
 
+            //filter on availability
+
             if(testOutput){
-                //filter on availability
                 if((availability.length==3)||
                     ((availability[0]==availability[3])&&(availability[1]==availability[4])&&(availability[2]==availability[5]))){ // ask for a day booking
                     testState="oneday";
-                    testOutput=oneDayAvailability(person, availability);
+                    testOutput=oneDayAvailability(candidate, availability);
                 }
                 else{ 
                     //availability.length==6, ask for a several-days booking 
                     testState="severaldays";
-                    testOutput=severalDaysAvailability(person, availability);
+                    testOutput=severalDaysAvailability(candidate, availability);
                 }
                 
                 //_filteredCandidates[ind]=1;
@@ -292,7 +300,7 @@ contract Elect {
            }
        }
 
-       sortOnQoS(toSort, alphas); // todo: avoid computation on non elected members --> create new list of candidates
+       sortOnQoS(toSort, alphas); 
         
     }
     
