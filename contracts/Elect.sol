@@ -67,6 +67,20 @@ contract Elect {
         return testState;
     }
 
+
+    function getSortedQoS() public view returns(uint[] memory){
+        return sortedQoSList;   
+    }
+
+    function getNormalized() public view returns(uint[] memory){       
+        return normalized;
+    }
+
+    function getNormalizedArray() public view returns(uint[][] memory){
+        return normalizedArray;
+    }
+
+
     function oneDayAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(bool){
         uint avStartDay = _person[1];
         uint avStartMonth = _person[2];
@@ -206,21 +220,15 @@ contract Elect {
             
             QoSList.push(SafeMath.div(QoS,numParams));
         }
+
+
         sortedQoSList = Sort.sort(QoSList);
+
+
+        // emit event
     }
 
 
-    function getSortedQoS() public view returns(uint[] memory){
-        return sortedQoSList;   
-    }
-
-    function getNormalized() public view returns(uint[] memory){       
-        return normalized;
-    }
-
-    function getNormalizedArray() public view returns(uint[][] memory){
-        return normalizedArray;
-    }
 
 
     //////// Global Filtering
@@ -266,15 +274,25 @@ contract Elect {
                 if(testOutput){
                     _filteredCandidates[ind]=1;
                     hasCandidates=true;
+
+                    // emit event(?)
                 }
             }
             
-            filteredCandidates = _filteredCandidates;
         }
 
+       filteredCandidates = _filteredCandidates;
 
+       // proceed to sorting
+       uint[][] memory toSort;
 
-        sortOnQoS(candidates, alphas); // todo: avoid computation on non elected members --> create new list of candidates
+       for (uint i=0; i<candidates.length; i++){
+           if(filteredCandidates[i]!=0){
+               toSort[i]=candidates[i]; // !!!! copy only sorting params !  for.... in range params: copy ! --> these will be the computed elems. 
+           }
+       }
+
+       sortOnQoS(toSort, alphas); // todo: avoid computation on non elected members --> create new list of candidates
         
     }
     
