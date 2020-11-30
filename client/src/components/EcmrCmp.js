@@ -158,10 +158,7 @@ class EcmrCmp extends React.Component {
     
         console.log(command);
 
-
-  
         this.setState({'command': command, 'tenants':tenants, 'status':status});
-
     }
 
     else{

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 0,
+    "name": "Fred",
+    "bcAddress":"0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8",
+    "lat": 48.87556612433851,
+    "long": 2.3172615049901175
+  },
+  {
+    "id": 1,
+    "name": "Gina",
+    "bcAddress":"0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8",
+    "lat": 48.875989501667924, 
+    "long": 2.338515329204682
+  }
+]

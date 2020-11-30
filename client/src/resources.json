@@ -22,7 +22,9 @@
     ],
     "lat": 48.87556612433851,
     "long": 2.3172615049901175,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 1,
@@ -39,7 +41,9 @@
 
     "lat": 48.875989501667924, 
     "long": 2.338515329204682,
-    "RateOfService":0
+    "nbDelayTime(min)": 0,
+    "nbServices":10,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 2,
@@ -56,7 +60,9 @@
 
     "lat": 48.88221979003496, 
     "long": 2.346776532952029,
-    "RateOfService":0
+    "nbDelayTime(min)": 5,
+    "nbServices":10,
+    "carbonFootprint(1-5,1=best)":3
   },
   {
     "id": 3,
@@ -73,7 +79,9 @@
 
     "lat": 48.88557803803845, 
     "long": 2.349169063375719,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":5,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 4,
@@ -90,7 +98,9 @@
 
     "lat": 48.8865681654836,
     "long": 2.356065999961582,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 5,
@@ -107,7 +117,9 @@
 
     "lat": 48.88717839904008, 
     "long": 2.3564361447736912,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 6,
@@ -124,7 +136,9 @@
 
     "lat": 48.88155300992463, 
     "long": 2.379820733688776,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 7,
@@ -141,7 +155,9 @@
 
     "lat": 48.84315650457052,
     "long": 2.3611096449935345,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 8,
@@ -158,7 +174,9 @@
 
     "lat": 48.827870585314365, 
     "long": 2.328322063330016,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 9,
@@ -175,7 +193,9 @@
 
     "lat": 48.81668147542969, 
     "long": 2.319224011136718,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 10,
@@ -192,7 +212,9 @@
 
     "lat": 48.82933967675336, 
     "long": 2.230990067234823,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   },
   {
     "id": 12,
@@ -209,7 +231,9 @@
 
     "lat": 48.91108878692731, 
     "long": 2.2651506783002247,
-    "RateOfService":0
+    "nbDelayTime(min)": 10,
+    "nbServices":3,
+    "carbonFootprint(1-5,1=best)":2
   }
 
 ]

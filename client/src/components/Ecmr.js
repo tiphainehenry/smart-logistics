@@ -27,6 +27,10 @@ class Ecmr extends React.Component {
       consignorLoc:'55 Rue du Faubourg Saint-Honoré, 75008 Paris',
       carrierLoc:'10 Place de la Concorde, 75008 Paris',
 
+      consigneeCompany: 'Orange',
+      consignorCompany:'Nespresso',
+      carrierCompany:'FM Logistic',
+
       takeover:'',
 
 
@@ -47,6 +51,10 @@ class Ecmr extends React.Component {
     this.handleConsigneeLoc = this.handleConsigneeLoc.bind(this);
     this.handleConsignorLoc = this.handleConsignorLoc.bind(this);
     this.handleCarrierLoc = this.handleCarrierLoc.bind(this);
+
+    this.handleConsigneeCompany = this.handleConsigneeCompany.bind(this);
+    this.handleConsignorCompany = this.handleConsignorCompany.bind(this);
+    this.handleCarrierCompany = this.handleCarrierCompany.bind(this);
 
     this.handleTakeover = this.handleTakeover.bind(this);
     this.handleShipFromLoc = this.handleShipFromLoc.bind(this);
@@ -118,6 +126,20 @@ class Ecmr extends React.Component {
     this.setState({carrierETH:e.target.value});
   }
 
+  handleConsigneeCompany(e) {
+    e.preventDefault();
+    this.setState({consigneeCompany:e.target.value});
+  }
+  handleConsignorCompany(e) {
+    e.preventDefault();
+    this.setState({consignorCompany:e.target.value});
+  }
+  handleCarrierCompany(e) {
+    e.preventDefault();
+    this.setState({carrierCompany:e.target.value});
+  }
+
+
   handleConsigneeLoc(e) {
     e.preventDefault();
     this.setState({consigneeLoc:e.target.value});
@@ -146,6 +168,10 @@ class Ecmr extends React.Component {
     <Form>
             <h3>Consignee</h3>
             <Form.Group controlId="formGridEmail">
+              <Form.Label>Company</Form.Label>
+              <Form.Control type="address" placeholder="consignee address" onChange={this.handleConsigneeCompany} value={this.state.consigneeCompany}/>
+            </Form.Group>
+            <Form.Group controlId="formGridEmail">
               <Form.Label>Eth account</Form.Label>
               <Form.Control type="address" placeholder="consignee address" onChange={this.handleConsigneeETH} value={this.state.consigneeETH}/>
             </Form.Group>
@@ -157,8 +183,13 @@ class Ecmr extends React.Component {
               </Row>
             </Form.Group>
           </Form.Group>
-
+          <hr/><br/>
             <h3>Consignor</h3>
+            <Form.Group controlId="formGridEmail">
+              <Form.Label>Company</Form.Label>
+              <Form.Control type="address" placeholder="consignee address" onChange={this.handleConsigneeCompany} value={this.state.consignorCompany}/>
+            </Form.Group>
+
             <Form.Group controlId="formGridEmail">
               <Form.Label>Eth account</Form.Label>
               <Form.Control type="address" placeholder="consignor address" onChange={this.handleConsignorETH} value={this.state.consignorETH}/>
@@ -171,8 +202,12 @@ class Ecmr extends React.Component {
               </Row>
             </Form.Group>
           </Form.Group>
-
+          <hr/><br/>
             <h3>Carrier</h3>
+            <Form.Group controlId="formGridEmail">
+              <Form.Label>Company</Form.Label>
+              <Form.Control type="address" placeholder="consignee address" onChange={this.handleConsigneeCompany} value={this.state.carrierCompany}/>
+            </Form.Group>
             <Form.Group controlId="formGridEmail">
               <Form.Label>Eth account</Form.Label>
               <Form.Control type="address" placeholder="carrier address" onChange={this.handleCarrierETH} value={this.state.carrierETH}/>

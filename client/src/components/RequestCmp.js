@@ -178,6 +178,13 @@ class RequestCmp extends React.Component {
                       }
                       this.setState({'toOptim':toOptim});
           
+                      var ratio = Math.max.apply(Math, toOptim) / 100;
+                      var l = toOptim.length;
+                      var i;
+
+                      for (i = 0; i < l; i++) {
+                        toOptim[i] = Math.round(toOptim[i] / ratio);
+                      }
                       console.log(toOptim);
                       this.askSCSort();
                   }, 
@@ -187,13 +194,12 @@ class RequestCmp extends React.Component {
           }, 
           (error) => { 
               console.log(error); 
-          } 
+          }
       );     
       }
-      else{
-        alert('Fill in the pickup address');
-      }
-
+        else{
+          alert('Fill in the pickup address');
+        }
       }
 
       else{

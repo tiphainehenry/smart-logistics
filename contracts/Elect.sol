@@ -1,6 +1,12 @@
 pragma experimental ABIEncoderV2;
 
 pragma solidity ^0.5.16;
+
+import "./Sort.sol";
+
+import "./SafeMath.sol";
+
+
 /**
  * @title Elect
  */
@@ -28,10 +34,17 @@ contract Elect {
     
     string testState;
 
-
     uint[][] candidates;
 
     bool hasCandidates = false;
+
+
+    uint[] normalized;
+    uint[][] normalizedArray;
+    uint[] QoSList;
+    uint[] sortedQoSList;
+
+
 
     ///// Delegated services        
     function getFilteredCandidates() public view returns(uint[] memory){
@@ -129,10 +142,90 @@ contract Elect {
     }
     
 
-    //////// Filtering
+    //////// Sorting 
 
-    function filter(uint[] memory filteringAttributes, uint[] memory availability) public payable{
-        //require((availability.length==3)||(availability.length==6)); // date
+
+     function normalize(uint[] memory input, uint mulfactor) public payable returns(uint[] memory){
+        normalized.length=0; 
+                
+        //get largest
+        uint256 largest = 0; 
+        for(uint i = 0; i < input.length; i++){
+            if(input[i] > largest) {
+                largest = input[i]; 
+            } 
+        }
+                
+                
+        //get smallest
+        uint256 smallest = 0; 
+        for(uint i = 0; i < input.length; i++){
+            if(input[i] < smallest) {
+                smallest = input[i]; 
+            } 
+        }
+                
+        // normalize                
+        for (uint j=0; j<input.length;j++){
+            normalized.push(SafeMath.div(SafeMath.mul(mulfactor,SafeMath.sub(input[j],smallest)),SafeMath.sub(largest,smallest)));
+        }
+                
+        return normalized;
+     }
+
+
+    function sortOnQoS(uint[][] memory input, uint[] memory alphas) public payable{
+        uint mulfactor = 100;
+
+        // normalize array
+        uint numParams = input[0].length;
+
+        for (uint j=0; j<numParams; j++){
+            
+            normalized.length=0;
+            
+            for (uint i=0; i<input.length; i++){
+                normalized.push(input[i][j]);
+            }
+            
+            uint[] memory tmp = normalize(normalized, mulfactor);
+            
+            for (uint i=0; i<input.length; i++){
+                input[i][j]=tmp[i];
+            }
+        }
+        
+        normalizedArray = input;
+        
+        QoSList.length=0;
+        for (uint i=0; i<input.length; i++){
+            uint QoS = 0;
+            for (uint j=0;j<numParams;j++){
+                QoS = QoS + SafeMath.mul(alphas[j], input[i][j]);
+            }
+            
+            QoSList.push(SafeMath.div(QoS,numParams));
+        }
+        sortedQoSList = Sort.sort(QoSList);
+    }
+
+
+    function getSortedQoS() public view returns(uint[] memory){
+        return sortedQoSList;   
+    }
+
+    function getNormalized() public view returns(uint[] memory){       
+        return normalized;
+    }
+
+    function getNormalizedArray() public view returns(uint[][] memory){
+        return normalizedArray;
+    }
+
+
+    //////// Global Filtering
+
+    function filter(uint[] memory filteringAttributes, uint[] memory alphas, uint[] memory availability) public payable{
         
         uint[] memory _filteredCandidates = new uint[](candidates.length);
         // reinitialize list of candidates
@@ -178,13 +271,13 @@ contract Elect {
             
             filteredCandidates = _filteredCandidates;
         }
-        
-        
+
+
+
+        sortOnQoS(candidates, alphas); // todo: avoid computation on non elected members --> create new list of candidates
         
     }
     
-    // function sort 
-    // function sort() - calculate ponderated mean
 
     
     
