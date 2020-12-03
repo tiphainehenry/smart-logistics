@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form, Button} from 'react-bootstrap';
+import {Tab, Tabs, Col, Form, Button} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import DateRangePicker from 'react-bootstrap-daterangepicker';
@@ -66,27 +66,19 @@ class Request extends React.Component {
   handleCarbonRatio = (e) =>{
     e.preventDefault();
     this.setState({carbonRatio:e.target.value});
-
-    console.log(e.target.value);
   }
   handleExperienceRatio = (e) =>{
     e.preventDefault();
     this.setState({experienceRatio:e.target.value});
-
-    console.log(e.target.value);
   }
 
   handleDelayRatio = (e) =>{
     e.preventDefault();
     this.setState({delayRatio:e.target.value});
-
-    console.log(e.target.value);
   }
   handleDurationRatio = (e) =>{
     e.preventDefault();
     this.setState({durationRatio:e.target.value});
-
-    console.log(e.target.value);
   }
 
 
@@ -146,14 +138,17 @@ class Request extends React.Component {
     <p>Fill in this form to find the right resource for your needs.</p>
     <hr/><br/>
 
-    <Form>
+
+    <Tabs defaultActiveKey="filtering" id="uncontrolled-tab-example">
+  <Tab eventKey="filtering" title="Filtering criteria">
+  <Form>
     <Form.Group controlId="formBasicEmail">
       <Form.Label>When?</Form.Label>
       <DateRangePicker onApply={this.handleAvailability}  startDate="1/1/2014" endDate="3/1/2014">
         <input type="text" className="form-control" />
       </DateRangePicker>
     </Form.Group>
-
+    <hr/><br/>
     <Form.Group controlId="formBasicEmail">
       <Form.Label>Truck equipment</Form.Label>
       <Form.Check 
@@ -192,9 +187,10 @@ class Request extends React.Component {
       <Form.Control onChange={this.handleDeliveryChange} value={this.state.deliveryAddress}  />
     </Form.Group>
   </Form.Group>
+</Form>  </Tab>
 
-  <hr/><br/>
-
+  <Tab eventKey="optim" title="Optimization criteria">
+  <Form>
       <Form.Group controlId="formBasicRange">
         <Form.Label>Delay acceptance</Form.Label>
         <Form.Control onChange={this.handleDelayRatio} value={this.state.delayRatio} type="range" />
@@ -211,32 +207,41 @@ class Request extends React.Component {
         <Form.Label>Min Duration</Form.Label>
         <Form.Control onChange={this.handleDurationRatio} value={this.state.durationRatio} type="range" />
       </Form.Group>
+      </Form>
 
-      <hr/><br/>
+  </Tab>
+
+{false? <Tab eventKey="incentives" title="Incentives">
+
+<Form>
+
+<Form.Group controlId="exampleForm.ControlSelect2">
+<Form.Label>Incentives</Form.Label>
+<Form.Control as="select" >
+<option>None</option>
+<option>Caution</option>
+<option>Audit service</option>
+</Form.Control>
+</Form.Group>
+<Form.Group controlId="exampleForm.ControlSelect1">
+<Form.Label>Tips (€)</Form.Label>
+<Form.Control as="select">
+<option>0</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+</Form.Control>
+</Form.Group>
+</Form>
+
+</Tab>
+: <div></div>}
+
+</Tabs>
 
 
-    <Form.Group controlId="exampleForm.ControlSelect2">
-    <Form.Label>Incentives</Form.Label>
-    <Form.Control as="select" >
-      <option>None</option>
-      <option>Caution</option>
-      <option>Audit service</option>
-    </Form.Control>
-  </Form.Group>
-  <Form.Group controlId="exampleForm.ControlSelect1">
-    <Form.Label>Tips (€)</Form.Label>
-    <Form.Control as="select">
-      <option>0</option>
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-    </Form.Control>
-  </Form.Group>
-  <hr/><br/>
-
-    </Form>
     <RequestCmp pickupAddress={this.state.pickupAddress} 
                 deliveryAddress={this.state.deliveryAddress}
                 pickupCoords={this.state.pickupCoords}

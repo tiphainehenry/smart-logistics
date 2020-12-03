@@ -33,7 +33,12 @@ class RequestCmp extends React.Component {
       bcCandidates:[], 
       testState:'',
       matchingIds:[],
-      toOptim:[]
+      toOptim:[], 
+
+      QoS:[],
+      bestProfiles:[]
+
+
 
     };
 
@@ -49,6 +54,7 @@ class RequestCmp extends React.Component {
     // instanciating the smart contract //
     this.computeProfileMatrix();
     this.moveCandidatesToBC();
+
   }
 
   computeProfileMatrix(){
@@ -84,8 +90,8 @@ class RequestCmp extends React.Component {
 
     }
 
-    console.log(this.state.candidateMatrix);
-    alert(this.state.candidateMatrix);
+    //console.log(candidateMatrix);
+    //alert('Candidate matrix: '+candidateMatrix);
 
     this.setState({'candidateMatrix':candidateMatrix});
   }
@@ -118,6 +124,12 @@ class RequestCmp extends React.Component {
 
       const testState = await this.state.contract.methods.getTestState().call();
 
+      var QoS = await this.state.contract.methods.getQoSList().call();
+
+      var bestProfiles = await this.state.contract.methods.getBestProfiles().call();
+
+      this.setState({'QoS':QoS, 'bestProfiles':bestProfiles});
+
       var cdd  = await this.state.contract.methods.getFilteredCandidates().call();
   
       if (cdd.includes('1')){
@@ -149,12 +161,9 @@ class RequestCmp extends React.Component {
       // EQUIPMENT
       var filteringAttributes = [this.props.equipment1,this.props.equipment2,this.props.equipment3];
 
-      console.log(filteringAttributes);
       this.setState({'date':date, 'filteringAttributes':filteringAttributes});
 
     
-      // SORTING RATIOS  
-
       // DISTANCE.DURATION
       if(this.state.pickupAddress != ''){
         axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
@@ -174,7 +183,6 @@ class RequestCmp extends React.Component {
                   locationList.push([candidates[i].long, candidates[i].lat]);
               }  
           
-              console.log(locationList);  
               axios.post("https://api.openrouteservice.org/v2/matrix/driving-car",{locations:locationList, sources:[0],"metrics":["distance","duration"]},{
                   headers: {Authorization: openrouteservice}
                  }).then( 
@@ -183,17 +191,17 @@ class RequestCmp extends React.Component {
 
                       var dists = result["durations"][0];
                       var durations = result["distances"][0];
-                      this.setState({'dists':dists, 'durations':durations});
           
                       //var ratio = Math.max.apply(Math, dists) / 100;
-                      //var l = dists.length;
-                      //var i;
+                      
+                      for (var i = 0; i < dists.length; i++) {
+                        dists[i] = Math.round(100*dists[i]);
+                        durations[i] = Math.round(100*durations[i]);
+                      }
 
-                      //for (i = 0; i < l; i++) {
-                      //  dists[i] = Math.round(dists[i] / ratio);
-                      //}
+                      this.setState({'dists':dists, 'durations':durations});
 
-                      console.log(dists);
+
                       this.askSCSort();
                   }, 
                   (error) => { 
@@ -220,20 +228,60 @@ class RequestCmp extends React.Component {
 
 
   async askSCSort(){
-    // call sorting function smart contract
+    const bcCandidates = await this.state.contract.methods.getCandidates().call();
 
-    console.log(this.state.filteringAttributes);
-    console.log(this.state.date);
+    // Normalize
 
-    console.log(this.props.optimRatios);    
-    alert(this.props.optimRatios);
+    /// retrieve optim matrix
+    var ToNormalize = [];
+    for(var i=0;i<bcCandidates.length;i++){
+      var candidateProfile = []
+      for(var j=10;j<bcCandidates[0].length;j++){
+        candidateProfile.push(bcCandidates[i][j]);
+      }
 
+      candidateProfile.push(this.state.dists[i]);
+      candidateProfile.push(this.state.durations[i]);
+
+      ToNormalize.push(candidateProfile);
+    }
+
+    // normalize matrix
+    var cols=[]
+    for (var j=0;j<ToNormalize[0].length;j++){
+      var col = ToNormalize.map(function(value,index) { return value[j]; });
+      
+      var ratio = Math.max.apply(Math, col);
+      for (var i = 0; i < col.length; i++) {
+          col[i] = Math.round(col[i] / ratio);
+      }
+      cols.push(col);
+    }
+
+    var normalized = [];
+    for (var i=0;i<cols[0].length;i++){
+      var line = cols.map(function(value,index) { return value[i]; });            
+      normalized.push(line);
+    }
+
+    console.log(normalized);
+
+    var qosList = []
+    for (var i=0;i<normalized.length;i++){
+      var line = normalized[i];
+      var qos_i = 0;
+
+      for (var j=0;j<line.length;j++){
+        qos_i = qos_i+this.props.optimRatios[j]*line[j];
+      }
+      qosList.push(qos_i);
+    }
+
+    // send to BC
     await this.state.contract.methods.elect(
+      qosList,
       this.state.filteringAttributes,
-      this.props.optimRatios,
-      this.state.date,
-      this.state.dists, //call oracle?
-      this.state.durations //call oracle?
+      this.state.date
     ).send({ from: this.state.accounts[0] });    
     
   }
@@ -243,7 +291,6 @@ class RequestCmp extends React.Component {
 
       var indices = cdd.map((e, i) => e === '1' ? i : '').filter(String)
       this.setState({'cdd':cdd,'matchingIds':indices});
-  
     
       if (cdd.includes(1)){
         this.setState({hasCandidates:true});
@@ -263,26 +310,42 @@ class RequestCmp extends React.Component {
   render(){
     const hasCandidates = this.state.hasCandidates;
     
-    return <div>
+    
 
+    return <div>
+    <br/>
     <Button variant="primary" type="submit" onClick={this.handleSubmitBC}>
       Filter and Sort 
     </Button>
 
-    <Button variant="secondary" type="submit" onClick={this.updCandidates}>
-      Update list of candidates
+    <Button variant="primary" type="submit" onClick={this.computeProfileMatrix}>
+      Display candidate matrix
     </Button>
 
   {hasCandidates?    
                   <div className="album py-5 bg-yellow">
                      <div className="container">
-                        <h2>Matching candidates</h2>
+                     <h2>Three Best Matches</h2>
+
+                     <div className="row">
+                     {this.state.bestProfiles.map((items, index) => {
+                              return <ResourceId key={index} resource={candidates[items[0]]} QoS={items[1]}/>;
+                            })}
+                  </div>
+
+                  {false? <div><h2>Matching candidates</h2>
                         <div className="row">
                         {this.state.matchingIds.map(id=> 
-                        <ResourceId resource={candidates[id]}/>
-                          )}                          
+                        <ResourceId resource={candidates[id]} QoS={this.state.QoS[id]}/>
+                        )}                          
+                      </div></div>: <div></div>
+                    }
+                        
+
+
                       </div>
-                      </div>
+
+
                   </div> :  <div className="album py-5">
                               <div className="container">
                                   <p>No matching candidates, retry with other configuration? </p>

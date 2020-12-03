@@ -17,7 +17,6 @@ contract Elect {
     // [[id, startDay, startMonth, startYear, endDay, endMonth, endYear, equipment1, equipment2, equipment3 //pickup, distance]]
     // pickup and delivery: *10E7, add a 'neg element' to string? (neg1 / neg2 --> and adapt calculus accordingly)
     
-    //uint[][] candidates = [ [0, 12,5,21, 13,5,21, 1,1,1],[1, 12,5,21, 13,5,21, 1,1,1], [2, 12,5,21, 15,5,21, 1,1,1], [3, 12,5,21, 16,5,21, 1,1,1], [4, 10,5,21, 14,5,21, 1,1,1], [5, 11,5,21, 14,5,21, 1,1,1] ]
     //uint[][] candidates =[
     //                        [1, 12,5,21, 13,5,21, 1,1,1],
     //                        [2, 12,5,21, 15,5,21, 1,1,1],
@@ -35,6 +34,8 @@ contract Elect {
     string testState;
 
     uint[] candidate;
+    //uint[][] candidates = [[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,0,0,0,10,3]];
+
     uint[][] candidates;
 
     bool hasCandidates = false;
@@ -42,10 +43,15 @@ contract Elect {
 
     uint[] normalized;
     uint[][] normalizedArray;
+    uint[][] tmpNormalizedArray;
     uint[] QoSList;
     uint[] sortedQoSList;
 
+    uint QoS;
+    uint n;
 
+    uint K=3;
+    uint[][] bestProfileIndexes;
 
     ///// Delegated services        
     function getFilteredCandidates() public view returns(uint[] memory){
@@ -68,6 +74,9 @@ contract Elect {
         return testState;
     }
 
+    function getQoSList() public view returns(uint[] memory){
+        return QoSList;   
+    }
 
     function getSortedQoS() public view returns(uint[] memory){
         return sortedQoSList;   
@@ -80,6 +89,37 @@ contract Elect {
     function getNormalizedArray() public view returns(uint[][] memory){
         return normalizedArray;
     }
+
+    function getQoS() public view returns (uint){
+        return QoS;
+    }
+
+    function getN() public view returns (uint){
+        // number of services realized
+        return n;
+    }
+
+    function getBestProfiles() public view returns (uint[][] memory){
+        return bestProfileIndexes;
+    }
+
+    // delivery update
+    //function updateQoS(uint input) public payable returns (uint){
+    //    n = n+1;
+    //    uint mulFact = 100; // avoid floating points
+
+    //    if(n==1){
+    //        QoS = input;
+    //    }
+    //    else{
+    //    uint K = div(mul(2,mulFact),n); 
+    //    uint newQoS = mul(K, input) + mul(mulFact,QoS) - mul(K, QoS);
+        
+    //    QoS = div(newQoS, 100);
+    //    }
+        
+    //    return QoS;
+    //}
 
 
     function oneDayAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(bool){
@@ -157,83 +197,101 @@ contract Elect {
     }
     
 
-    //////// Sorting 
+    //////// QoS calculation
 
 
-     function normalize(uint[] memory input, uint mulfactor) public payable returns(uint[] memory){
-        normalized.length=0; 
+    // function normalize(uint[] memory input, uint mulfactor) public payable returns(uint[] memory){
+    //    normalized.length=0; 
                 
         //get largest
-        uint256 largest = 0; 
-        for(uint i = 0; i < input.length; i++){
-            if(input[i] > largest) {
-                largest = input[i]; 
-            } 
-        }
+    //    uint256 largest = 0; 
+    //    for(uint i = 0; i < input.length; i++){
+    //        if(input[i] > largest) {
+    //            largest = input[i]; 
+    //        } 
+    //    }
                 
                 
-        //get smallest
-        uint256 smallest = 0; 
-        for(uint i = 0; i < input.length; i++){
-            if(input[i] < smallest) {
-                smallest = input[i]; 
-            } 
-        }
+        //get smallest            uint  = 0;
+            
+    //        if(filter[i]==1){
+    //            for (uint j=0; j<input[0].length; j++){
+    //                    _QoS = _QoS + SafeMath.mul(alphas[i], input[i][j]);
+    //                }
+    //            _QoS = SafeMath.div(_QoS,numParams);
+    //        }
+
+    //    uint256 smallest = 0; 
+    //    for(uint i = 0; i < input.length; i++){
+    //        if(input[i] < smallest) {
+    //            smallest = input[i]; 
+    //        } 
+    //    }
                 
         // normalize                
-        for (uint j=0; j<input.length;j++){
-            normalized.push(SafeMath.div(SafeMath.mul(mulfactor,SafeMath.sub(input[j],smallest)),SafeMath.sub(largest,smallest)));
-        }
+    //    for (uint j=0; j<input.length;j++){
+            
+    //        normalized.push(SafeMath.div(SafeMath.mul(mulfactor,SafeMath.sub(input[j],smallest)),SafeMath.sub(largest,smallest)));
+    //    }
                 
-        return normalized;
-     }
+    //    return normalized;
+    // }
 
 
-    function sortOnQoS(uint[][] memory input, uint[] memory alphas) public payable{
-        uint mulfactor = 100;
+    
 
-        // normalize array
-        uint numParams = input[0].length;
-
-        for (uint j=0; j<numParams; j++){
-            
-            normalized.length=0;
-            
-            for (uint i=0; i<input.length; i++){
-                normalized.push(input[i][j]);
-            }
-            
-            uint[] memory tmp = normalize(normalized, mulfactor);
-            
-            for (uint i=0; i<input.length; i++){
-                input[i][j]=tmp[i];
-            }
-        }
+    function computeQoS(uint[] memory filter, uint[] memory input) public payable{
         
-        normalizedArray = input;
+        //uint numParams = input[0].length;
+
+        //uint mulfactor = 100;
+        // normalize array by column
+        //for (uint j=startingOptimIndex; j<numParams; j++){
+        //    normalized.length=0;
+        //    for (uint i=0; i<input.length; i++){
+        //        normalized.push(input[i][j]);
+        //    }
+            
+        //    normalizedArray.push(normalize(normalized, mulfactor));
+        //}
         
+        require(filter.length==input.length,  "issue with size");
+        bestProfileIndexes.length=0;
+
         QoSList.length=0;
-        for (uint i=0; i<input.length; i++){
-            uint QoS = 0;
-            for (uint j=0;j<numParams;j++){
-                QoS = QoS + SafeMath.mul(alphas[j], input[i][j]);
-            }
-            
-            QoSList.push(SafeMath.div(QoS,numParams));
+        for (uint i=0;i<input.length;i++){
+            uint _QoS = SafeMath.mul(filter[i], input[i]);            
+            QoSList.push(_QoS);
+        }
+
+        // get n best ones
+        uint[] memory tmpList = new uint[](QoSList.length);
+        for (uint i=0;i<QoSList.length;i++){
+            tmpList[i] = QoSList[i];
         }
 
 
-        sortedQoSList = Sort.sort(QoSList);
+        for(uint j=0;j<K;j++){
+            uint _QoS = tmpList[0];        
+            uint _index = 0;
 
+            for (uint i=0;i<QoSList.length;i++){
+                if(tmpList[i]>_QoS){
+                    _QoS=tmpList[i];
+                    _index = i;
+                }
+            }
+            bestProfileIndexes.push([_index,_QoS]);
+            tmpList[_index]=0;
+        }
 
         // emit event
     }
 
     //////// main
 
-    function elect(uint[] memory filteringAttributes, uint[] memory alphas, uint[] memory availability, uint[] memory distances, uint[] memory durations) public payable{
+    function elect(uint[] memory qosList, uint[] memory filteringAttributes, uint[] memory availability) public payable{
         
-
         // proceed to filtering
         uint[] memory _filteredCandidates = new uint[](candidates.length);
         // reinitialize list of candidates
@@ -245,8 +303,7 @@ contract Elect {
             candidate.length = 0;
 
             candidate = candidates[ind];
-            candidate.push(distances[ind]);
-            candidate.push(durations[ind]);
+            
             bool testOutput = true;
 
             // filter on  attributes
@@ -290,25 +347,10 @@ contract Elect {
         }
 
        filteredCandidates = _filteredCandidates;
-
-       // proceed to sorting
-       uint[][] memory toSort;
-
-       for (uint i=0; i<candidates.length; i++){
-           if(filteredCandidates[i]!=0){
-               toSort[i]=candidates[i]; // !!!! copy only sorting params !  for.... in range params: copy ! --> these will be the computed elems. 
-           }
-       }
-
-       sortOnQoS(toSort, alphas); 
-        
+       
+       computeQoS(filteredCandidates, qosList);
+       
+    
     }
     
-
-    
-    
-    // function instanciate contract 
-    
-    
-
 }
