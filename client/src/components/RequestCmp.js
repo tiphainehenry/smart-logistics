@@ -318,9 +318,6 @@ class RequestCmp extends React.Component {
       Filter and Sort 
     </Button>
 
-    <Button variant="primary" type="submit" onClick={this.computeProfileMatrix}>
-      Display candidate matrix
-    </Button>
 
   {hasCandidates?    
                   <div className="album py-5 bg-yellow">
