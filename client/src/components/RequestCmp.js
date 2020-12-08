@@ -281,8 +281,7 @@ class RequestCmp extends React.Component {
       var line = cols.map(function(value,index) { return value[i]; });            
       normalized.push(line);
     }
-
-    console.log(normalized);
+    //console.log(normalized);
 
     var qosList = []
     for (var i=0;i<normalized.length;i++){
