@@ -9,9 +9,6 @@ import "./SafeMath.sol";
 
 /**
  * @title Elect
- * 
- * 
- * Smart contract to elect a profile based on a set of objective criteria, and a QoS. 
  */
 
 
@@ -112,9 +109,26 @@ contract Elect {
         return bestProfileIndexes;
     }
 
+    // delivery update
+    //function updateQoS(uint input) public payable returns (uint){
+    //    n = n+1;
+    //    uint mulFact = 100; // avoid floating points
+
+    //    if(n==1){
+    //        QoS = input;
+    //    }
+    //    else{
+    //    uint K = div(mul(2,mulFact),n); 
+    //    uint newQoS = mul(K, input) + mul(mulFact,QoS) - mul(K, QoS);
+        
+    //    QoS = div(newQoS, 100);
+    //    }
+        
+    //    return QoS;
+    //}
 
 
-    function oneDayAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(uint){
+    function oneDayAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(bool){
         uint avStartDay = _person[1];
         uint avStartMonth = _person[2];
         uint avStartYear = _person[3];
@@ -127,28 +141,30 @@ contract Elect {
         uint reqMonth= _availability[1];
         uint reqYear= _availability[2];
                     
-        uint testOutput=1;
+        bool testOutput=true;
         
         if((reqMonth==avStartMonth) && (reqYear==avStartYear)){ // same month, same year
             if((avStartDay > reqDay)||(avEndDay<reqDay)){ // person is booked
-                testOutput=0;
+                testOutput=false;
                 }
             }
         else if((reqMonth!=avStartMonth) && (reqYear==avStartYear)){ //same year, different month
             if(!((avStartMonth < reqMonth) && (avStartDay < reqDay)) || (avEndMonth<reqMonth)){ // person is booked
-                testOutput=0;
+                testOutput=false;
             }
         }
         else{ //different year
             if(!(reqYear>avStartYear)||(avEndYear<reqYear)){ // person is booked
-                testOutput=0;
+                testOutput=false;
             }
         }
         return testOutput;
     }
 
 
-    function severalDaysAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(uint){
+    function severalDaysAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(bool){
+        bool testOutput=true;
+        
         uint avStartDay = _person[1];
         uint avStartMonth = _person[2];
         uint avStartYear = _person[3];
@@ -165,31 +181,85 @@ contract Elect {
         uint reqEMonth=_availability[4];
         uint reqEYear=_availability[5];
                     
-        uint testOutput=1;
 
         require(reqEDay>reqSDay);
 
         if((reqSMonth==avStartMonth) && (reqSYear==avStartYear) && (reqEYear==avEndYear)){ // same start month, same year
             if((avStartDay > reqSDay)||(avEndDay<reqEDay)){ // person is booked
-                testOutput=0;
+                testOutput=false;
                 }
         }
         else if((reqSMonth!=avStartMonth) && (reqSYear==avStartYear) &&  (reqEYear==avEndYear)){ //same year, different month
             if(!((avStartMonth < reqSMonth) && (avStartDay < reqSDay)) || (avEndMonth<reqSMonth) || (avEndMonth<reqEMonth)){ // person is booked
-                testOutput=0;
+                testOutput=false;
                 }
             }
         else{ //different year
             if(!(reqSYear>avStartYear)||(avEndYear<reqSYear)||(avEndYear<reqEYear)){ // person is booked
-                testOutput=0;
+                testOutput=false;
             }
         }
         return testOutput;
     }
     
 
+    //////// QoS calculation
+
+
+    // function normalize(uint[] memory input, uint mulfactor) public payable returns(uint[] memory){
+    //    normalized.length=0; 
+                
+        //get largest
+    //    uint256 largest = 0; 
+    //    for(uint i = 0; i < input.length; i++){
+    //        if(input[i] > largest) {
+    //            largest = input[i]; 
+    //        } 
+    //    }
+                
+                
+        //get smallest            uint  = 0;
+            
+    //        if(filter[i]==1){
+    //            for (uint j=0; j<input[0].length; j++){
+    //                    _QoS = _QoS + SafeMath.mul(alphas[i], input[i][j]);
+    //                }
+    //            _QoS = SafeMath.div(_QoS,numParams);
+    //        }
+
+    //    uint256 smallest = 0; 
+    //    for(uint i = 0; i < input.length; i++){
+    //        if(input[i] < smallest) {
+    //            smallest = input[i]; 
+    //        } 
+    //    }
+                
+        // normalize                
+    //    for (uint j=0; j<input.length;j++){
+            
+    //        normalized.push(SafeMath.div(SafeMath.mul(mulfactor,SafeMath.sub(input[j],smallest)),SafeMath.sub(largest,smallest)));
+    //    }
+                
+    //    return normalized;
+    // }
+
+
+    
 
     function computeQoS(uint[] memory filter, uint[] memory input) public payable{
+        
+        //uint numParams = input[0].length;
+
+        //uint mulfactor = 100;
+        // normalize array by column
+        //for (uint j=startingOptimIndex; j<numParams; j++){
+        //    normalized.length=0;
+        //    for (uint i=0; i<input.length; i++){
+        //        normalized.push(input[i][j]);
+        //    }
+            
+        //    normalizedArray.push(normalize(normalized, mulfactor));
+        //}
         
         require(filter.length==input.length,  "issue with size");
 
@@ -268,18 +338,22 @@ contract Elect {
                 if((availability.length==3)||
                     ((availability[0]==availability[3])&&(availability[1]==availability[4])&&(availability[2]==availability[5]))){ // ask for a day booking
                     testState="oneday";
-                    _filteredCandidates[ind]=oneDayAvailability(candidate, availability);
+                    testOutput=oneDayAvailability(candidate, availability);
                 }
                 else{ 
                     //availability.length==6, ask for a several-days booking 
                     testState="severaldays";
-                    _filteredCandidates[ind]=severalDaysAvailability(candidate, availability);
+                    testOutput=severalDaysAvailability(candidate, availability);
                 }
 
-                if(_filteredCandidates[ind] == 1){
+                //update list of candidates
+                if(testOutput){
+                    _filteredCandidates[ind]=1;
                     hasCandidates=true;
+
                 }
             }
+            
         }
         
         filteredCandidates = _filteredCandidates;
@@ -295,66 +369,5 @@ contract Elect {
        
     
     }
-    
-    
-    
-    // delivery update
-    //function updateQoS(uint input) public payable returns (uint){
-    //    n = n+1;
-    //    uint mulFact = 100; // avoid floating points
-
-    //    if(n==1){
-    //        QoS = input;
-    //    }
-    //    else{
-    //    uint K = div(mul(2,mulFact),n); 
-    //    uint newQoS = mul(K, input) + mul(mulFact,QoS) - mul(K, QoS);
-        
-    //    QoS = div(newQoS, 100);
-    //    }
-        
-    //    return QoS;
-    //}
-    //////// QoS calculation
-
-
-    // function normalize(uint[] memory input, uint mulfactor) public payable returns(uint[] memory){
-    //    normalized.length=0; 
-                
-        //get largest
-    //    uint256 largest = 0; 
-    //    for(uint i = 0; i < input.length; i++){
-    //        if(input[i] > largest) {
-    //            largest = input[i]; 
-    //        } 
-    //    }
-                
-                
-        //get smallest            uint  = 0;
-            
-    //        if(filter[i]==1){
-    //            for (uint j=0; j<input[0].length; j++){
-    //                    _QoS = _QoS + SafeMath.mul(alphas[i], input[i][j]);
-    //                }
-    //            _QoS = SafeMath.div(_QoS,numParams);
-    //        }
-
-    //    uint256 smallest = 0; 
-    //    for(uint i = 0; i < input.length; i++){
-    //        if(input[i] < smallest) {
-    //            smallest = input[i]; 
-    //        } 
-    //    }
-                
-        // normalize                
-    //    for (uint j=0; j<input.length;j++){
-            
-    //        normalized.push(SafeMath.div(SafeMath.mul(mulfactor,SafeMath.sub(input[j],smallest)),SafeMath.sub(largest,smallest)));
-    //    }
-                
-    //    return normalized;
-    // }
-
-    
     
 }
