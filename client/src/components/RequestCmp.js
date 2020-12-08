@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form, Button} from 'react-bootstrap';
+import {Button, Spinner} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import Elect from '../contracts/Elect.json';
@@ -7,6 +7,8 @@ import getWeb3 from '../getWeb3';
 
 import ResourceId from "./ResourceId";
 import axios from 'axios';
+
+import $ from 'jquery'; 
 
 const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
 const openrouteservice = require("../../package.json")["openrouteservice"];
@@ -36,26 +38,27 @@ class RequestCmp extends React.Component {
       toOptim:[], 
 
       QoS:[],
-      bestProfiles:[]
+      bestProfiles:[],
+      BCQuery:false,
 
-
+      hasCandidates:0
 
     };
 
-    this.updCandidates = this.updCandidates.bind(this);
     this.computeProfileMatrix = this.computeProfileMatrix.bind(this);
     this.handleSubmitBC = this.handleSubmitBC.bind(this);
-    this.handleResultBC = this.handleResultBC.bind(this);
     this.askSCSort = this.askSCSort.bind(this);
-
+    this.refreshBCQuery = this.refreshBCQuery.bind(this);
   };
   
-  componentWillMount() {
+  async componentWillMount() {
     // instanciating the smart contract //
     this.computeProfileMatrix();
     this.moveCandidatesToBC();
 
   }
+
+
 
   computeProfileMatrix(){
     var candidateMatrix = [];
@@ -97,11 +100,17 @@ class RequestCmp extends React.Component {
   }
 
 
+  refreshBCQuery = () => {
+    this.setState({BCQuery: !this.state.BCQuery});
+  }
+  
+
   async moveCandidatesToBC() {
 
     try {  
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
+
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
@@ -116,29 +125,37 @@ class RequestCmp extends React.Component {
 
       this.setState({ web3, accounts, contract: instance });
 
-      const bcCandidates = await this.state.contract.methods.getCandidates().call();
-      if ((bcCandidates.length==0) | (bcCandidates.length != this.state.candidateMatrix.length)){
+      const bcCandidates = await instance.methods.getCandidates().call();
+
+      if ((bcCandidates == null) | ((bcCandidates != null) && (bcCandidates.length != this.state.candidateMatrix.length))){
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
-        await this.state.contract.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
+        await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
 
-      const testState = await this.state.contract.methods.getTestState().call();
-
-      var QoS = await this.state.contract.methods.getQoSList().call();
-
-      var bestProfiles = await this.state.contract.methods.getBestProfiles().call();
-
-      this.setState({'QoS':QoS, 'bestProfiles':bestProfiles});
-
-      var cdd  = await this.state.contract.methods.getFilteredCandidates().call();
+      instance.events.BestCandidates().on('data', (event) => {
+        console.log(event);
   
-      if (cdd.includes('1')){
-        var indices = cdd.map((e, i) => e === '1' ? i : '').filter(String)
-        this.setState({hasCandidates:true,'matchingIds':indices});
-      }
-  
-      this.setState({'bcCandidates':bcCandidates, 'testState':testState, 'cdd':cdd});
+        this.refreshBCQuery();
 
+
+        var hasCandidates=0;
+        if(event.returnValues[0]=='No matching found'){
+          hasCandidates=2;
+        }
+        else if(event.returnValues[0]=='Matching'){
+          hasCandidates=1;
+        }
+        else{
+          hasCandidates=0;
+        }
+        
+        this.setState({hasCandidates:hasCandidates,bestProfiles:event.returnValues[1]})
+  
+      })
+      .on('error', console.error);
+
+
+  
     } catch (error) {
         // Catch any errors for any of the above operations.
         alert(
@@ -150,7 +167,10 @@ class RequestCmp extends React.Component {
 
   async handleSubmitBC(e){
     e.preventDefault();
+
     if(this.props.availability !=''){
+
+      this.refreshBCQuery();
 
       // AVAILABILITY
       var splAvailability = this.props.availability.split(' ');   
@@ -222,8 +242,6 @@ class RequestCmp extends React.Component {
         alert('Availability missing, please fill it in.')
       }
 
-    this.handleResultBC();
-
   }
 
 
@@ -286,40 +304,31 @@ class RequestCmp extends React.Component {
     
   }
 
-  async handleResultBC(e){
-      var cdd  = await this.state.contract.methods.getFilteredCandidates().call();
 
-      var indices = cdd.map((e, i) => e === '1' ? i : '').filter(String)
-      this.setState({'cdd':cdd,'matchingIds':indices});
+  render(){    
     
-      if (cdd.includes(1)){
-        this.setState({hasCandidates:true});
-      }
-      else{
-        this.setState({hasCandidates:false});
-      } 
-        
-    }
-
-  updCandidates(e){
-    e.preventDefault();
-    this.computeProfileMatrix();
-  }
-
-
-  render(){
-    const hasCandidates = this.state.hasCandidates;
-    
-    
-
     return <div>
     <br/>
     <Button variant="primary" type="submit" onClick={this.handleSubmitBC}>
       Filter and Sort 
     </Button>
+    {' '}
 
+    {this.state.BCQuery?     <Button variant="primary" disabled>
+                                <Spinner
+                                  as="span"
+                                  animation="border"
+                                  size="sm"
+                                  role="status"
+                                  aria-hidden="true"
+                                />
+                                <span className="sr-only">Loading...</span>
+                              </Button>
+                            : 
+                            <div></div>    
+    }
 
-  {hasCandidates?    
+  {this.state.hasCandidates==1?    
                   <div className="album py-5 bg-yellow">
                      <div className="container">
                      <h2>Three Best Matches</h2>
@@ -328,26 +337,15 @@ class RequestCmp extends React.Component {
                      {this.state.bestProfiles.map((items, index) => {
                               return <ResourceId key={index} resource={candidates[items[0]]} QoS={items[1]}/>;
                             })}
+                  </div>         
                   </div>
-
-                  {false? <div><h2>Matching candidates</h2>
-                        <div className="row">
-                        {this.state.matchingIds.map(id=> 
-                        <ResourceId resource={candidates[id]} QoS={this.state.QoS[id]}/>
-                        )}                          
-                      </div></div>: <div></div>
-                    }
-                        
-
-
-                      </div>
-
-
-                  </div> :  <div className="album py-5">
+                  </div> : 
+    this.state.hasCandidates==2? <div className="album py-5">
                               <div className="container">
                                   <p>No matching candidates, retry with other configuration? </p>
                               </div>  
-                            </div>  
+                            </div> :
+    <div></div> 
     }
 
   </div>;

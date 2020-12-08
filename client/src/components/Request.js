@@ -37,7 +37,7 @@ class Request extends React.Component {
       pickupCoords:'Fill in the pickup address',
       deliveryCoords:'Fill in the delivery address',
 
-      availability:'',
+      availability:'01/12/2021 - 01/12/2021',
 
       equipment1:0,
       equipment2:0,

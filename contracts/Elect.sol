@@ -52,6 +52,12 @@ contract Elect {
 
     uint K=3;
     uint[][] bestProfileIndexes;
+    uint[][] NoProfileIndexes;
+
+    event BestCandidates(
+        string ExistCandidates,
+        uint[][] profiles  
+    );
 
     ///// Delegated services        
     function getFilteredCandidates() public view returns(uint[] memory){
@@ -256,6 +262,8 @@ contract Elect {
         //}
         
         require(filter.length==input.length,  "issue with size");
+
+        
         bestProfileIndexes.length=0;
 
         QoSList.length=0;
@@ -286,12 +294,18 @@ contract Elect {
         }
 
         // emit event
+        emit BestCandidates(
+            'Matching',
+            bestProfileIndexes  
+        );
+
     }
 
     //////// main
 
     function elect(uint[] memory qosList, uint[] memory filteringAttributes, uint[] memory availability) public payable{
-        
+        hasCandidates=false; // reset
+
         // proceed to filtering
         uint[] memory _filteredCandidates = new uint[](candidates.length);
         // reinitialize list of candidates
@@ -331,24 +345,27 @@ contract Elect {
                     testState="severaldays";
                     testOutput=severalDaysAvailability(candidate, availability);
                 }
-                
-                //_filteredCandidates[ind]=1;
-                //hasCandidates=true;
 
                 //update list of candidates
                 if(testOutput){
                     _filteredCandidates[ind]=1;
                     hasCandidates=true;
 
-                    // emit event(?)
                 }
             }
             
         }
+        
+        filteredCandidates = _filteredCandidates;
+        
+        if(hasCandidates){
+            computeQoS(filteredCandidates, qosList);
+        }
 
-       filteredCandidates = _filteredCandidates;
-       
-       computeQoS(filteredCandidates, qosList);
+        else{
+            emit BestCandidates('No matching found', NoProfileIndexes);
+        }
+
        
     
     }
