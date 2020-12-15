@@ -195,8 +195,9 @@ class EcmrCmp extends React.Component {
       <Card.Header>
         
       <Row>
-      <Col sm={3}><h4>Status</h4></Col>
-      <Col sm={8}>{this.state.status.map(e=><p>{e}</p>)}</Col>
+      <Col sm={3}><h4>Registered ECMR</h4></Col>
+        {false? <div><Col sm={3}><h4>Status</h4></Col>
+                <Col sm={8}>{this.state.status.map(e=><p>{e}</p>)}</Col></div>: <div></div>}
     </Row>
       </Card.Header>
       

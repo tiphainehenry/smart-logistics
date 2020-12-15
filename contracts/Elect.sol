@@ -2,9 +2,14 @@ pragma experimental ABIEncoderV2;
 
 pragma solidity ^0.5.16;
 
-import "./Sort.sol";
+//import "./Sort.sol";
 
 import "./SafeMath.sol";
+
+
+import "./ProvableAPI_0.5.sol";
+
+//import "github.com/provable-things/ethereum-api/provableAPI_0.5.sol";
 
 
 /**
@@ -15,7 +20,7 @@ import "./SafeMath.sol";
  */
 
 
-contract Elect {
+contract Elect is usingProvable {
     // list of persons with attribute values:   
     // [[id, startDay, startMonth, startYear, endDay, endMonth, endYear, equipment1, equipment2, equipment3 //pickup, distance]]
     // pickup and delivery: *10E7, add a 'neg element' to string? (neg1 / neg2 --> and adapt calculus accordingly)
@@ -30,16 +35,18 @@ contract Elect {
     //uint[] filteringAttributes = [1,1,1];    // list of filtering attributes     
     //uint[] availability = [12,1,21];
     
-    uint[] filteredCandidates;
+
+    uint[] filter;
     
     string filteredIds;
     
-    string testState;
+    enum AvailabiltyState{ONEDAY, SEVERALDAYS}
+    AvailabiltyState avState;
 
     uint[] candidate;
-    //uint[][] candidates = [[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,0,0,0,10,3]];
+    uint[][] candidates = [[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,1,0,0,10,3],[6,12,1,21,13,1,21,0,0,0,10,3]];
 
-    uint[][] candidates;
+    //uint[][] candidates;
 
     bool hasCandidates = false;
 
@@ -53,18 +60,35 @@ contract Elect {
     uint QoS;
     uint n;
 
-    uint K=3;
-    uint[][] bestProfileIndexes;
-    uint[][] NoProfileIndexes;
+    //uint K=3; num params
+    string bestProfiles;
+
+    string alphas; 
 
     event BestCandidates(
         string ExistCandidates,
-        uint[][] profiles  
+        string profiles  
     );
+    
+    enum TestOutput{NO,YES}
+    TestOutput output;
+
+    struct Date { 
+      uint day;
+      uint month;
+      uint year;
+   }
+
+   string public qosList_string;
+   event LogConstructorInitiated(string nextStep);
+   event LogQoSCompute(string qosList);
+   event LogNewProvableQuery(string description);
+
+    function () external payable {}
 
     ///// Delegated services        
-    function getFilteredCandidates() public view returns(uint[] memory){
-        return filteredCandidates;
+    function getfilter() public view returns(uint[] memory){
+        return filter;
     }
 
     function existsCandidates() public view returns(bool){
@@ -79,8 +103,8 @@ contract Elect {
         return candidates;
     }
 
-    function getTestState() public view returns(string memory){
-        return testState;
+    function getAvailabiltyState() public view returns(AvailabiltyState){
+        return avState;
     }
 
     function getQoSList() public view returns(uint[] memory){
@@ -108,139 +132,181 @@ contract Elect {
         return n;
     }
 
-    function getBestProfiles() public view returns (uint[][] memory){
-        return bestProfileIndexes;
+    function getBestProfiles() public view returns (string memory){
+        return bestProfiles;
     }
 
 
 
     function oneDayAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(uint){
-        uint avStartDay = _person[1];
-        uint avStartMonth = _person[2];
-        uint avStartYear = _person[3];
-
-        uint avEndDay = _person[4];
-        uint avEndMonth = _person[5];
-        uint avEndYear = _person[6];
-
-        uint reqDay= _availability[0];
-        uint reqMonth= _availability[1];
-        uint reqYear= _availability[2];
-                    
-        uint testOutput=1;
         
-        if((reqMonth==avStartMonth) && (reqYear==avStartYear)){ // same month, same year
-            if((avStartDay > reqDay)||(avEndDay<reqDay)){ // person is booked
-                testOutput=0;
+        
+        Date memory ASDate = Date(_person[1],_person[2],_person[3]);  // available start
+        Date memory AEDate = Date(_person[4],_person[5],_person[6]); //available end
+
+        Date memory RSDate = Date(_availability[0],_availability[1],_availability[2]); // required start
+
+        output = TestOutput.YES;
+
+
+        if((RSDate.month==ASDate.month) && (RSDate.year==ASDate.year)){ // same month, same year
+            if((ASDate.day > RSDate.day)||(AEDate.day<RSDate.day)){ // person is booked
+                output = TestOutput.NO;
                 }
             }
-        else if((reqMonth!=avStartMonth) && (reqYear==avStartYear)){ //same year, different month
-            if(!((avStartMonth < reqMonth) && (avStartDay < reqDay)) || (avEndMonth<reqMonth)){ // person is booked
-                testOutput=0;
+        else if((RSDate.month!=ASDate.month) && (RSDate.year==ASDate.year)){ //same year, different month
+            if(!((ASDate.month < RSDate.month) && (ASDate.day < RSDate.day)) || (AEDate.month<RSDate.month)){ // person is booked
+                output = TestOutput.NO;
             }
         }
         else{ //different year
-            if(!(reqYear>avStartYear)||(avEndYear<reqYear)){ // person is booked
-                testOutput=0;
+            if(!(RSDate.year>ASDate.year)||(AEDate.year<RSDate.year)){ // person is booked
+                output = TestOutput.NO;
             }
         }
-        return testOutput;
+        return uint(output);
     }
 
 
     function severalDaysAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(uint){
-        uint avStartDay = _person[1];
-        uint avStartMonth = _person[2];
-        uint avStartYear = _person[3];
+        
+        
+        Date memory ASDate = Date(_person[1],_person[2],_person[3]);  // available start
+        Date memory AEDate = Date(_person[4],_person[5],_person[6]); //available end
 
-        uint avEndDay = _person[4];
-        uint avEndMonth = _person[5];
-        uint avEndYear = _person[6];
+        Date memory RSDate = Date(_availability[0],_availability[1],_availability[2]); // required start
+        Date memory REDate = Date(_availability[3],_availability[4],_availability[5]); // required end
 
-        uint reqSDay=_availability[0];
-        uint reqSMonth=_availability[1];
-        uint reqSYear=_availability[2];
-                    
-        uint reqEDay=_availability[3];
-        uint reqEMonth=_availability[4];
-        uint reqEYear=_availability[5];
-                    
-        uint testOutput=1;
+        output = TestOutput.YES;
+        
+        require(REDate.day>RSDate.day);
 
-        require(reqEDay>reqSDay);
-
-        if((reqSMonth==avStartMonth) && (reqSYear==avStartYear) && (reqEYear==avEndYear)){ // same start month, same year
-            if((avStartDay > reqSDay)||(avEndDay<reqEDay)){ // person is booked
-                testOutput=0;
+        if((RSDate.month==ASDate.month) && (RSDate.year==ASDate.year) && (REDate.year==AEDate.year)){ // same start month, same year
+            if((ASDate.day > RSDate.day)||(AEDate.day<REDate.day)){ // person is booked
+                output = TestOutput.NO;
                 }
         }
-        else if((reqSMonth!=avStartMonth) && (reqSYear==avStartYear) &&  (reqEYear==avEndYear)){ //same year, different month
-            if(!((avStartMonth < reqSMonth) && (avStartDay < reqSDay)) || (avEndMonth<reqSMonth) || (avEndMonth<reqEMonth)){ // person is booked
-                testOutput=0;
-                }
+        else if((RSDate.month!=ASDate.month) && (RSDate.year==ASDate.year) &&  (REDate.year==AEDate.year)){ //same year, different month
+            if(!((ASDate.month < RSDate.month) && (ASDate.day < RSDate.day)) || (AEDate.month<RSDate.month) || (AEDate.month<REDate.month)){ // person is booked
+                output = TestOutput.NO;                }
             }
         else{ //different year
-            if(!(reqSYear>avStartYear)||(avEndYear<reqSYear)||(avEndYear<reqEYear)){ // person is booked
-                testOutput=0;
-            }
+            if(!(RSDate.year>ASDate.year)||(AEDate.year<RSDate.year)||(AEDate.year<REDate.year)){ // person is booked
+                output = TestOutput.NO;            }
         }
-        return testOutput;
+        
+        return uint(output);
     }
     
+    ///// Provable test
 
+    function ProvableContract() public payable {
+        OAR = OracleAddrResolverI(0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475);
+        emit LogConstructorInitiated("Constructor was initiated. Call 'QoSOracle()' to send the Provable Query.");
+    }
 
-    function computeQoS(uint[] memory filter, uint[] memory input) public payable{
+    function __callback(bytes32 myid, string memory result) public {
+        if (msg.sender != provable_cbAddress()) revert();
         
-        require(filter.length==input.length,  "issue with size");
+        bestProfiles=result;
 
-        
-        bestProfileIndexes.length=0;
+        //emit LogQoSCompute(result);
 
-        QoSList.length=0;
-        for (uint i=0;i<input.length;i++){
-            uint _QoS = SafeMath.mul(filter[i], input[i]);            
-            QoSList.push(_QoS);
-        }
+        //// get best profiles        
+        //bestProfileIndexes.length=0;
+
+        //QoSList.length=0;
+        //for (uint i=0;i<input.length;i++){
+        //    uint _QoS = SafeMath.mul(filter[i], input[i]);            
+        //    QoSList.push(_QoS);
+        //}
 
         // get n best ones
-        uint[] memory tmpList = new uint[](QoSList.length);
-        for (uint i=0;i<QoSList.length;i++){
-            tmpList[i] = QoSList[i];
-        }
+        //uint[] memory tmpList = new uint[](QoSList.length);
+        //for (uint i=0;i<QoSList.length;i++){
+        //    tmpList[i] = QoSList[i];
+        //}
 
+        //for(uint j=0;j<K;j++){
+        //    uint _QoS = tmpList[0];        
+        //    uint _index = 0;
 
-        for(uint j=0;j<K;j++){
-            uint _QoS = tmpList[0];        
-            uint _index = 0;
-
-            for (uint i=0;i<QoSList.length;i++){
-                if(tmpList[i]>_QoS){
-                    _QoS=tmpList[i];
-                    _index = i;
-                }
-            }
-            bestProfileIndexes.push([_index,_QoS]);
-            tmpList[_index]=0;
-        }
+        //    for (uint i=0;i<QoSList.length;i++){
+        //        if(tmpList[i]>_QoS){
+        //            _QoS=tmpList[i];
+        //            _index = i;
+        //        }
+        //    }
+        //    bestProfileIndexes.push([_index,_QoS]);
+        //    tmpList[_index]=0;
+        //}
 
         // emit event
         emit BestCandidates(
             'Matching',
-            bestProfileIndexes  
+            bestProfiles
         );
+
+
+    }
+
+    event ToString(string result);
+
+
+    function list2string(uint[] memory list) public payable returns(string memory) {
+             
+                string memory str_list = "[";
+                for(uint j=0;j<list.length-1;j++){    
+                    str_list = string(abi.encodePacked(str_list, uint2str(list[j]), ","));
+                }
+                str_list = string(abi.encodePacked(str_list,uint2str(list[list.length-1]), "]"));
+                emit ToString(str_list);
+                return str_list;
+    }
+
+
+    function uintarrays2string(uint[][] memory array, uint num_param) public payable returns(string memory) {
+                string memory str_matrix = "[";
+
+                uint ind_param = array.length - num_param;
+
+                for(uint i=0;i<array.length-1;i++){ // for each candidate, compute str 
+
+                    uint[] memory cdd = array[i];
+                    string memory str_cdd = "[";
+
+                    for(uint j=ind_param;j<array[0].length-1;j++){    
+                        str_cdd = string(abi.encodePacked(str_cdd, uint2str(cdd[j]), ","));
+                    }
+                    str_matrix = string(abi.encodePacked(str_matrix, str_cdd, uint2str(cdd[array[0].length-1]), "],"));
+
+                }
+
+                uint[] memory cdd = array[array.length-1];
+                string memory str_cdd = "[";
+                for(uint j=ind_param;j<array[0].length-1;j++){    
+                    str_cdd = string(abi.encodePacked(str_cdd, uint2str(cdd[j]), ","));
+                }
+                str_matrix = string(abi.encodePacked(str_matrix, str_cdd, uint2str(cdd[array[0].length-1]), "]]"));
+            
+                emit ToString(str_matrix);
+                
+                return str_matrix;
 
     }
 
     //////// main
 
-    function elect(uint[] memory qosList, uint[] memory filteringAttributes, uint[] memory availability) public payable{
+    function elect(uint[] memory filteringAttributes, uint[] memory availability, string memory _alphas, uint num_alphas) public payable{
         hasCandidates=false; // reset
 
+        alphas =_alphas;
+
         // proceed to filtering
-        uint[] memory _filteredCandidates = new uint[](candidates.length);
+        uint[] memory _filter = new uint[](candidates.length);
         // reinitialize list of candidates
         for(uint i=0; i<candidates.length;i++){
-            _filteredCandidates[i]=0;
+            _filter[i]=0;
         }
 
         for(uint ind=0; ind<candidates.length; ind++){ // test all candidates
@@ -267,33 +333,39 @@ contract Elect {
             if(testOutput){
                 if((availability.length==3)||
                     ((availability[0]==availability[3])&&(availability[1]==availability[4])&&(availability[2]==availability[5]))){ // ask for a day booking
-                    testState="oneday";
-                    _filteredCandidates[ind]=oneDayAvailability(candidate, availability);
+                    avState = AvailabiltyState.ONEDAY;
+                    _filter[ind]=oneDayAvailability(candidate, availability);
                 }
                 else{ 
                     //availability.length==6, ask for a several-days booking 
-                    testState="severaldays";
-                    _filteredCandidates[ind]=severalDaysAvailability(candidate, availability);
+                    avState = AvailabiltyState.SEVERALDAYS;
+                    _filter[ind]=severalDaysAvailability(candidate, availability);
                 }
 
-                if(_filteredCandidates[ind] == 1){
+                if(_filter[ind] == 1){
                     hasCandidates=true;
                 }
             }
         }
         
-        filteredCandidates = _filteredCandidates;
+        filter = _filter;
         
         if(hasCandidates){
-            computeQoS(filteredCandidates, qosList);
+            /// compute qos via oracle
+            if (provable_getPrice("URL") > address(this).balance) {
+                emit LogNewProvableQuery("Provable query was NOT sent, please add some ETH to cover for the query fee");
+            } else {
+                emit LogNewProvableQuery("Provable query was sent, standing by for the answer..");
+                string memory str_matrix = uintarrays2string(candidates,num_alphas);
+                string memory str_filter = list2string(filter);
+                string memory url= string(abi.encodePacked("https://qosapi.herokuapp.com/api/qos?matrix=", str_matrix, "&alpha=[", alphas,"]", "&filter=", str_filter));
+                provable_query("URL",url);
+            }
         }
 
         else{
-            emit BestCandidates('No matching found', NoProfileIndexes);
+            emit BestCandidates('No matching found', '');
         }
-
-       
-    
     }
     
     

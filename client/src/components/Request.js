@@ -187,7 +187,9 @@ class Request extends React.Component {
       <Form.Control onChange={this.handleDeliveryChange} value={this.state.deliveryAddress}  />
     </Form.Group>
   </Form.Group>
-</Form>  </Tab>
+</Form>  
+
+</Tab>
 
   <Tab eventKey="optim" title="Optimization criteria">
   <Form>
@@ -198,14 +200,6 @@ class Request extends React.Component {
       <Form.Group controlId="formBasicRange">
         <Form.Label>Max Experience</Form.Label>
         <Form.Control onChange={this.handleExperienceRatio} value={this.state.experienceRatio} type="range" />
-      </Form.Group>
-      <Form.Group controlId="formBasicRange">
-        <Form.Label>Min Distance</Form.Label>
-        <Form.Control onChange={this.handleCarbonRatio} value={this.state.carbonRatio} type="range" />
-      </Form.Group>
-      <Form.Group controlId="formBasicRange">
-        <Form.Label>Min Duration</Form.Label>
-        <Form.Control onChange={this.handleDurationRatio} value={this.state.durationRatio} type="range" />
       </Form.Group>
       </Form>
 
@@ -251,7 +245,7 @@ class Request extends React.Component {
                 equipment2={this.state.equipment2}
                 equipment3={this.state.equipment3}
 
-                optimRatios= {[this.state.delayRatio, this.state.experienceRatio, this.state.carbonRatio, this.state.durationRatio]} 
+                optimRatios= {[this.state.delayRatio, this.state.experienceRatio]} 
 
     />
 

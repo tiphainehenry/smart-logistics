@@ -80,7 +80,7 @@ contract ECMR {
         
         consignorID = _consignorID;
         consignorLat = _consignorLat;
-        consigneeLng = _consignorLng;
+        consignorLng = _consignorLng;
         
         carrierID = _carrierID;
         carrierLat = _carrierLat;

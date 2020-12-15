@@ -49,6 +49,8 @@ class RequestCmp extends React.Component {
     this.handleSubmitBC = this.handleSubmitBC.bind(this);
     this.askSCSort = this.askSCSort.bind(this);
     this.refreshBCQuery = this.refreshBCQuery.bind(this);
+    this.FundContract = this.FundContract.bind(this);
+
   };
   
   async componentWillMount() {
@@ -93,10 +95,11 @@ class RequestCmp extends React.Component {
 
     }
 
-    //console.log(candidateMatrix);
+    console.log(candidateMatrix);
     //alert('Candidate matrix: '+candidateMatrix);
 
     this.setState({'candidateMatrix':candidateMatrix});
+    
   }
 
 
@@ -132,12 +135,16 @@ class RequestCmp extends React.Component {
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
 
+      instance.events.allEvents({fromBlock: 0, toBlock: 'latest'}).on('data', (event) => {
+        console.log(event);
+      })
+      .on('error', console.error);
+
+
       instance.events.BestCandidates().on('data', (event) => {
         console.log(event);
   
         this.refreshBCQuery();
-
-
         var hasCandidates=0;
         if(event.returnValues[0]=='No matching found'){
           hasCandidates=2;
@@ -149,11 +156,29 @@ class RequestCmp extends React.Component {
           hasCandidates=0;
         }
         
-        this.setState({hasCandidates:hasCandidates,bestProfiles:event.returnValues[1]})
-  
+        var qosresults = event.returnValues[1].split("Profiles': '")[1].slice(0, -2).split('], ');
+
+        // convert to array
+        var qoslist = [];
+        for(var i=0;i<qosresults.length;i++){
+
+          var qoscdd = qosresults[i].replace("[[","").replace("]]","").replace("[","").replace("]","").split(",");
+
+          console.log(qoscdd);
+
+          var profile = []
+          for(var j=0;j<qoscdd.length;j++){
+            profile.push(parseInt(qoscdd[j]));
+          }
+
+          qoslist.push(profile);
+        }
+        console.log(qoslist);
+
+        // save to state
+        this.setState({hasCandidates:hasCandidates,bestProfiles:qoslist})
       })
       .on('error', console.error);
-
 
   
     } catch (error) {
@@ -183,58 +208,61 @@ class RequestCmp extends React.Component {
 
       this.setState({'date':date, 'filteringAttributes':filteringAttributes});
 
-    
-      // DISTANCE.DURATION
-      if(this.state.pickupAddress != ''){
-        axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
-          (response) => { 
-              var result = response.data; 
+      this.askSCSort();
 
-              var pickupCoordsLat = result['results'][0]['locations'][0]['displayLatLng'].lat;
-              var pickupCoordsLng = result['results'][0]['locations'][0]['displayLatLng'].lng;
+      if(false){
+        // DISTANCE.DURATION
+        if(this.state.pickupAddress != ''){
+          axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
+            (response) => { 
+                var result = response.data; 
 
-              this.setState({pickupCoords:{
-                lat:pickupCoordsLat,
-                lng:pickupCoordsLng}});
+                var pickupCoordsLat = result['results'][0]['locations'][0]['displayLatLng'].lat;
+                var pickupCoordsLng = result['results'][0]['locations'][0]['displayLatLng'].lng;
 
-
-              var locationList = [[pickupCoordsLng, pickupCoordsLat]];
-              for(var i=0; i<candidates.length; i++){
-                  locationList.push([candidates[i].long, candidates[i].lat]);
-              }  
-          
-              axios.post("https://api.openrouteservice.org/v2/matrix/driving-car",{locations:locationList, sources:[0],"metrics":["distance","duration"]},{
-                  headers: {Authorization: openrouteservice}
-                 }).then( 
-                  (response) => { 
-                      var result = response.data; 
-
-                      var dists = result["durations"][0];
-                      var durations = result["distances"][0];
-          
-                      //var ratio = Math.max.apply(Math, dists) / 100;
-                      
-                      for (var i = 0; i < dists.length; i++) {
-                        dists[i] = Math.round(100*dists[i]);
-                        durations[i] = Math.round(100*durations[i]);
-                      }
-
-                      this.setState({'dists':dists, 'durations':durations});
+                this.setState({pickupCoords:{
+                  lat:pickupCoordsLat,
+                  lng:pickupCoordsLng}});
 
 
-                      this.askSCSort();
-                  }, 
-                  (error) => { 
-                      console.log(error); 
-                  }) 
-          }, 
-          (error) => { 
-              console.log(error); 
+                var locationList = [[pickupCoordsLng, pickupCoordsLat]];
+                for(var i=0; i<candidates.length; i++){
+                    locationList.push([candidates[i].long, candidates[i].lat]);
+                }  
+            
+                axios.post("https://api.openrouteservice.org/v2/matrix/driving-car",{locations:locationList, sources:[0],"metrics":["distance","duration"]},{
+                    headers: {Authorization: openrouteservice}
+                  }).then( 
+                    (response) => { 
+                        var result = response.data; 
+
+                        var dists = result["durations"][0];
+                        var durations = result["distances"][0];
+            
+                        //var ratio = Math.max.apply(Math, dists) / 100;
+                        
+                        for (var i = 0; i < dists.length; i++) {
+                          dists[i] = Math.round(100*dists[i]);
+                          durations[i] = Math.round(100*durations[i]);
+                        }
+
+                        this.setState({'dists':dists, 'durations':durations});
+
+
+                        this.askSCSort();
+                    }, 
+                    (error) => { 
+                        console.log(error); 
+                    }) 
+            }, 
+            (error) => { 
+                console.log(error); 
+            }
+        );     
+        }
+          else{
+            alert('Fill in the pickup address');
           }
-      );     
-      }
-        else{
-          alert('Fill in the pickup address');
         }
       }
 
@@ -247,62 +275,81 @@ class RequestCmp extends React.Component {
 
   async askSCSort(){
     const bcCandidates = await this.state.contract.methods.getCandidates().call();
+    console.log(bcCandidates);
+
+
+    // send to BC
+
+    await this.state.contract.methods.elect(
+          this.state.filteringAttributes,
+          this.state.date,
+          this.props.optimRatios.toString(),
+          this.props.optimRatios.length
+        ).send({from: this.state.accounts[0],
+                gas:4712388,
+                gasPrice: 100000000000});    
+    
 
     // Normalize
 
     /// retrieve optim matrix
-    var ToNormalize = [];
-    for(var i=0;i<bcCandidates.length;i++){
-      var candidateProfile = []
-      for(var j=10;j<bcCandidates[0].length;j++){
-        candidateProfile.push(bcCandidates[i][j]);
-      }
+    //var ToNormalize = [];
+    //for(var i=0;i<bcCandidates.length;i++){
+    //  var candidateProfile = []
+    //  for(var j=10;j<bcCandidates[0].length;j++){
+    //    candidateProfile.push(bcCandidates[i][j]);
+    //  }
 
-      candidateProfile.push(this.state.dists[i]);
-      candidateProfile.push(this.state.durations[i]);
+    //  candidateProfile.push(this.state.dists[i]);
+    //  candidateProfile.push(this.state.durations[i]);
 
-      ToNormalize.push(candidateProfile);
-    }
+    //  ToNormalize.push(candidateProfile);
+    //}
 
     // normalize matrix
-    var cols=[]
-    for (var j=0;j<ToNormalize[0].length;j++){
-      var col = ToNormalize.map(function(value,index) { return value[j]; });
+    //var cols=[]
+    //for (var j=0;j<ToNormalize[0].length;j++){
+    //  var col = ToNormalize.map(function(value,index) { return value[j]; });
       
-      var ratio = Math.max.apply(Math, col);
-      for (var i = 0; i < col.length; i++) {
-          col[i] = Math.round(col[i] / ratio);
-      }
-      cols.push(col);
-    }
+    //  var ratio = Math.max.apply(Math, col);
+    //  for (var i = 0; i < col.length; i++) {
+    //      col[i] = Math.round(col[i] / ratio);
+    //  }
+    //  cols.push(col);
+    //}
 
-    var normalized = [];
-    for (var i=0;i<cols[0].length;i++){
-      var line = cols.map(function(value,index) { return value[i]; });            
-      normalized.push(line);
-    }
+    //var normalized = [];
+    //for (var i=0;i<cols[0].length;i++){
+    //  var line = cols.map(function(value,index) { return value[i]; });            
+    //  normalized.push(line);
+    //}
     //console.log(normalized);
 
-    var qosList = []
-    for (var i=0;i<normalized.length;i++){
-      var line = normalized[i];
-      var qos_i = 0;
+    //var qosList = []
+    //for (var i=0;i<normalized.length;i++){
+    //  var line = normalized[i];
+    //  var qos_i = 0;
 
-      for (var j=0;j<line.length;j++){
-        qos_i = qos_i+this.props.optimRatios[j]*line[j];
-      }
-      qosList.push(qos_i);
-    }
+    //  for (var j=0;j<line.length;j++){
+    //    qos_i = qos_i+this.props.optimRatios[j]*line[j];
+    //  }
+    //  qosList.push(qos_i);
+    //}
 
-    // send to BC
-    await this.state.contract.methods.elect(
-      qosList,
-      this.state.filteringAttributes,
-      this.state.date
-    ).send({ from: this.state.accounts[0] });    
     
   }
 
+  async FundContract(){
+    const balance = await this.state.web3.eth.getBalance('0x87B2729580A0842BE45E2CB6b7C564d0989FDE18');
+    console.log('Current balance is'+ balance.toString());
+
+    await this.state.web3.eth.sendTransaction({
+        from: '0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB',
+        to: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18',
+        value: this.state.web3.utils.toWei('3', 'ether'),
+        data: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18'
+          })
+  }
 
   render(){    
     
@@ -310,6 +357,10 @@ class RequestCmp extends React.Component {
     <br/>
     <Button variant="primary" type="submit" onClick={this.handleSubmitBC}>
       Filter and Sort 
+    </Button>
+    {' '}
+    <Button variant="primary" type="submit" onClick={this.FundContract}>
+      Fund Oracle
     </Button>
     {' '}
 
