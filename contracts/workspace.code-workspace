@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../react-cyto/client"
+		},
+		{
+			"path": "../../ethereum-examples"
+		}
+	],
+	"settings": {}
+}

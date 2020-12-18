@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Decentralized MarketPlace</title>
+
+    <!--  jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- Bootstrap Date-Picker Plugin -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- Address plugin -->
+    <link rel="stylesheet" href="css/formCustom.css">
+
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+   <!--form idea https://codepen.io/carlinscuderi/pen/XmeyvV--> 
+
+    <div className="container">
+      <div className="row">
+        <div className="col-xs-12 col-sm-8 col-sm-push-2">
+          <h1 className="text-center">MarketPlace 3.0</h1>
+          <hr/>
+          <br/>
+        </div>
+      </div>
+      <hr/>
+
+      <div id="accordion">
+        <div className="card">
+          <div className="card-header" id="headingOne">
+            <h5 className="mb-0">
+              <button className="btn btn-link btn-lg" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Launch request
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" className="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div className="card-body">
+              <form method="post">
+                <div className="form-group">
+                  <label for="exampleInputEmail1">Availability</label>
+                  <div className="form-group">
+                    <div className='input-group dates' id='datetimepicker6'>
+                       <input type="text" className="form-control" name="daterange" value="11/15/2020 - 12/01/2020" />
+                       <script>
+                          var $j = jQuery.noConflict();
+                          $j(function() {
+                            $j('input[name="daterange"]').daterangepicker({
+                              opens: 'left'
+                            }, function(start, end, label) {
+                              console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                          });
+                          </script>
+                       <span className="input-group-addon">
+                       <span className="glyphicon glyphicon-calendar"></span>
+                       </span>
+                    </div>
+                 </div>          
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div className="form-group">
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
+
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
+
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Pickup address</label>
+                  <fieldset className="fancy-form">
+                    <div>
+                      <div>
+                        <input className="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
+                      </div>
+                    </div>
+                    <div>
+                      <div className="city-wrap">
+                        <input className="form-control" type="text" name="city" id="city" placeholder="city">
+                      </div>
+                      <div className="zip-wrap">
+                        <input className="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
+                        <p className="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                
+                    <div className="submit-wrap">
+                      <input type="submit" value="Submit">
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Delivery address</label>
+                  <fieldset className="fancy-form">
+                    <div>
+                      <div>
+                        <input className="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
+                      </div>
+                    </div>
+                    <div>
+                      <div className="city-wrap">
+                        <input className="form-control" type="text" name="city" id="city" placeholder="city">
+                      </div>
+                      <div className="zip-wrap">
+                        <input className="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
+                        <p className="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                              
+                  </fieldset>
+
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Desired Quality of Service (QoS)</label>
+                  <p>Range the importance of the following QoS metrics:</p>
+                    <div >
+                      <label for="qos1">Delay acceptance</label>
+                      <input style="width: 60%;" type="range" id="qos1" name="qos1"
+                             min="0" max="11">
+                    </div>
+                    <div >
+                      <label for="qos2">Quality of delivery</label>
+                      <input style="width: 60%;" type="range" id="qos2" name="qos2"
+                             min="0" max="11">
+                    </div>
+                    <div >
+                      <label for="qos3">Corporate social responsibility</label>
+                      <input style="width: 60%;" type="range" id="qos3" name="qos3"
+                             min="0" max="11">
+                    </div>
+
+                </div>
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Incentives</label>
+                  <div className="form-group">
+                    <input type="number" className="form-control" id="caution" placeholder="enter here">
+                  </div>
+                  <div className="form-group">
+                    <label for="tips">Tips</label>
+                    <input type="number" className="form-control" id="tips" placeholder="enter here">
+                  </div>
+    
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </form>
+              </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header" id="headingTwo">
+            <h5 className="mb-0">
+              <button className="btn btn-link btn-lg collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Offer service
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div className="card-body">
+              <form>
+                <div className="form-group">
+                  <label for="exampleInputEmail1">Availability</label>
+                  <div className="form-group">
+                    <div className='input-group dates' id='datetimepicker6'>
+                       <input type="text" className="form-control" name="daterange" value="11/15/2020 - 12/01/2020" />
+                       <script>
+                          var $j = jQuery.noConflict();
+                          $j(function() {
+                            $j('input[name="daterange"]').daterangepicker({
+                              opens: 'left'
+                            }, function(start, end, label) {
+                              console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                            });
+                          });
+                          </script>
+                       <span className="input-group-addon">
+                       <span className="glyphicon glyphicon-calendar"></span>
+                       </span>
+                    </div>
+                 </div>          
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div className="form-group">
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
+
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
+
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Warehouse Location</label>
+                  <fieldset className="fancy-form">
+                    <div>
+                      <div>
+                        <input className="form-control" type="text" name="address-line-1" id="address-line-1" placeholder="street">
+                      </div>
+                    </div>
+                    <div>
+                      <div className="city-wrap">
+                        <input className="form-control" type="text" name="city" id="city" placeholder="city">
+                      </div>
+                      <div className="zip-wrap">
+                        <input className="form-control" type="text" pattern="[0-9]*" maxlength="5" required name="zip" id="zip" placeholder="zip">
+                        <p className="zip-error">Not a real zip code.</p>
+                      </div>
+                    </div>
+                
+                    <div className="submit-wrap">
+                      <input type="submit" value="Submit">
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Truck equipment</label>
+                  <div className="form-group">
+                    <input type="checkbox" id="eq1" name="eq1" value="Cool">
+                    <label for="eq1">Cool storage</label><br>
+
+                    <input type="checkbox" id="eq2" name="eq2" value="Chemical">
+                    <label for="eq2">Chemical license</label><br>
+
+                    <input type="checkbox" id="eq3" name="eq3" value="International">
+                    <label for="eq3">International license</label><br>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label for="exampleInputPassword1">Max caution accepted</label>
+                  <div className="form-group">
+                    <input type="number" className="form-control" id="caution" placeholder="enter here">
+                  </div>
+    
+                </div>
+
+                <button type="submit" className="btn btn-primary">Submit</button>
+              </form>
+              </div>
+          </div>
+        </div>
+      </div>
+    <hr/>
+
+    <h3>Registered Resources</h3>
+
+      <div id="resourcesRow" className="row">
+        <!-- resourceS LOAD HERE -->
+      </div>
+    </div>
+
+    <div id="resourceTemplate" style="display: none;">
+      <div className="col-sm-6 col-md-4 col-lg-3">
+        <div className="panel panel-default panel-resource">
+          <div className="panel-heading">
+            <h3 className="panel-title">Scrappy</h3>
+          </div>
+          <div className="panel-body">
+            <img alt="140x140" data-src="holder.js/140x140" className="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+            <br/><br/>
+            <strong>Location</strong>: <span className="resource-location">Warren, MI</span><br/><br/>
+            <button className="btn btn-default btn-adopt" type="button" data-id="0">Hire</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
