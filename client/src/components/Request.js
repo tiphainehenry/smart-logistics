@@ -191,7 +191,7 @@ class Request extends React.Component {
 
 </Tab>
 
-  <Tab eventKey="optim" title="Optimization criteria">
+  <Tab eventKey="optim" title="Sorting criteria">
   <Form>
       <Form.Group controlId="formBasicRange">
         <Form.Label>Delay acceptance</Form.Label>

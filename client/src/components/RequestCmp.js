@@ -155,30 +155,38 @@ class RequestCmp extends React.Component {
         else{
           hasCandidates=0;
         }
-        
-        var qosresults = event.returnValues[1].split("Profiles': '")[1].slice(0, -2).split('], ');
 
-        // convert to array
-        var qoslist = [];
-        for(var i=0;i<qosresults.length;i++){
+        if (event.returnValues[1] != ""){
+          var qosresults = event.returnValues[1].split("Profiles': '")[1].slice(0, -2).split('], ');
 
-          var qoscdd = qosresults[i].replace("[[","").replace("]]","").replace("[","").replace("]","").split(",");
-
-          console.log(qoscdd);
-
-          var profile = []
-          for(var j=0;j<qoscdd.length;j++){
-            profile.push(parseInt(qoscdd[j]));
+          // convert to array
+          var qoslist = [];
+          for(var i=0;i<qosresults.length;i++){
+  
+            var qoscdd = qosresults[i].replace("[[","").replace("]]","").replace("[","").replace("]","").split(",");
+  
+            console.log(qoscdd);
+  
+            var profile = []
+            for(var j=0;j<qoscdd.length;j++){
+              profile.push(parseInt(qoscdd[j]));
+            }
+  
+            qoslist.push(profile);
           }
-
-          qoslist.push(profile);
+          console.log(qoslist);
+  
+          // save to state
+          this.setState({hasCandidates:hasCandidates,bestProfiles:qoslist})  
         }
-        console.log(qoslist);
-
-        // save to state
-        this.setState({hasCandidates:hasCandidates,bestProfiles:qoslist})
+        else{
+          alert("Oops, HTTP error, please try again")
+        }
       })
       .on('error', console.error);
+
+      this.setState({hasCandidates:true,bestProfiles:[[1, 1445],[11, 1012],[10, 1012]]})  
+
 
   
     } catch (error) {
@@ -341,12 +349,12 @@ class RequestCmp extends React.Component {
 
   async FundContract(){
     const balance = await this.state.web3.eth.getBalance('0x87B2729580A0842BE45E2CB6b7C564d0989FDE18');
-    console.log('Current balance is'+ balance.toString());
+    console.log('Current balance is '+ balance.toString());
 
     await this.state.web3.eth.sendTransaction({
         from: '0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB',
         to: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18',
-        value: this.state.web3.utils.toWei('3', 'ether'),
+        value: this.state.web3.utils.toWei('1', 'ether'),
         data: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18'
           })
   }
@@ -385,7 +393,10 @@ class RequestCmp extends React.Component {
 
                      <div className="row">
                      {this.state.bestProfiles.map((items, index) => {
-                              return <ResourceId key={index} resource={candidates[items[0]]} QoS={items[1]}/>;
+                              return <ResourceId key={index} resource={candidates[items[0]]} QoS={items[1]} hire={true}
+                                                 sc={[this.state.web3, this.state.accounts]} 
+                              
+                              />;
                             })}
                   </div>         
                   </div>

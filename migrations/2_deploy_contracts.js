@@ -3,6 +3,7 @@ const Elect = artifacts.require("Elect");
 const SafeMath = artifacts.require("SafeMath");
 const Sort = artifacts.require("Sort");
 const usingProvable = artifacts.require("usingProvable");
+const Hire = artifacts.require("Hire");
 
 
 module.exports = function(deployer,network,accounts) {
@@ -16,5 +17,6 @@ module.exports = function(deployer,network,accounts) {
   deployer.link(usingProvable,Elect);
 
   deployer.deploy(Elect);
+  deployer.deploy(Hire);
 
 };

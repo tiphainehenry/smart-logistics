@@ -72,7 +72,7 @@ class Homepage extends Component {
         <div className="album py-5 bg-light">
             <div className="container">            
                 <div className="row">
-                    {this.state.resourceArray.map(i=> <ResourceId resource={resources[i]}/>)}
+                    {this.state.resourceArray.map(i=> <ResourceId resource={resources[i]} hire={false}/>)}
                 </div>
             </div>
         </div>

@@ -250,7 +250,7 @@ contract Elect is usingProvable {
 
     }
 
-    event ToString(string result);
+    //event ToString(string result);
 
 
     function list2string(uint[] memory list) public payable returns(string memory) {
@@ -260,7 +260,7 @@ contract Elect is usingProvable {
                     str_list = string(abi.encodePacked(str_list, uint2str(list[j]), ","));
                 }
                 str_list = string(abi.encodePacked(str_list,uint2str(list[list.length-1]), "]"));
-                emit ToString(str_list);
+                //emit ToString(str_list);
                 return str_list;
     }
 
@@ -289,7 +289,7 @@ contract Elect is usingProvable {
                 }
                 str_matrix = string(abi.encodePacked(str_matrix, str_cdd, uint2str(cdd[array[0].length-1]), "]]"));
             
-                emit ToString(str_matrix);
+                //emit ToString(str_matrix);
                 
                 return str_matrix;
 
@@ -367,8 +367,6 @@ contract Elect is usingProvable {
             emit BestCandidates('No matching found', '');
         }
     }
-    
-    
     
     // delivery update
     //function updateQoS(uint input) public payable returns (uint){
