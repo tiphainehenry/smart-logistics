@@ -14,7 +14,6 @@
     "test": "NODE_ENV=test npx truffle test",
     "bridge": "./node_modules/.bin/ethereum-bridge -a 9 -H 127.0.0.1 -p 8545 --dev",
     "chain": "ganache-cli -m 'east enjoy keen nut hat debris blur trophy alone steak large federal' -p 8546 --db ./ganache/ -u 0 -u 1"
-
   },
   "license": "MIT",
   "dependencies": {

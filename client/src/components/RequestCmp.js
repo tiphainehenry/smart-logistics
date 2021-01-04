@@ -394,8 +394,9 @@ class RequestCmp extends React.Component {
                      <div className="row">
                      {this.state.bestProfiles.map((items, index) => {
                               return <ResourceId key={index} resource={candidates[items[0]]} QoS={items[1]} hire={true}
-                                                 sc={[this.state.web3, this.state.accounts]} 
-                              
+                                                 sc={[this.state.web3, this.state.accounts]}
+                                                 service = {[this.props.availability,this.props.pickupAddress, this.props.deliveryAddress]
+                                                  }               
                               />;
                             })}
                   </div>         

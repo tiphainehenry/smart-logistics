@@ -8,6 +8,7 @@ import {
 import Homepage from './components/Homepage';
 import Request from './components/Request';
 import Ecmr from './components/Ecmr';
+import MyContracts from './components/MyContracts';
 
 
 const App = () => (
@@ -16,6 +17,7 @@ const App = () => (
       <Route exact path="/" component={Homepage} />
       <Route exact path="/request" component={Request} />
       <Route exact path="/ecmr" component={Ecmr} />
+      <Route exact path="/mycontracts" component={MyContracts} />
     </div>
   </BrowserRouter>
 );

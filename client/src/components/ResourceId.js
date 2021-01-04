@@ -2,7 +2,14 @@ import React from 'react';
 import {Button, Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
+import {
+  Link
+} from 'react-router-dom';
+
+
+
 import ECMR from '../contracts/ECMR.json';
+
 import getWeb3 from '../getWeb3';
 
 class ResourceId extends React.Component {
@@ -70,7 +77,8 @@ class ResourceId extends React.Component {
 }
 
   async hireCandidate(){
-    alert(this.props.sc[1]+ " is hiring " + this.props.resource.name + " " + this.props.resource.bcAddress);
+    //alert(this.props.sc[1][0]+ " is hiring " + this.props.resource.name + " on " +this.props.service[0].replace(',','/'));
+    console.log(this.props.service);
   }
 
 
@@ -88,9 +96,25 @@ class ResourceId extends React.Component {
                     <div className="d-flex justify-content-between align-items-center">
 
                       {this.props.hire?
-                      <Button variant="primary" type="submit" onClick={this.hireCandidate}>
+                      <Link variant="primary" onClick={this.hireCandidate}
+                      to={{pathname:'/mycontracts', state: {
+                        info:{
+                          tenants:{
+                            'consignee':{'address':this.props.sc[1][0], 'name':'consigneeName'}, 
+                            'consignor':{'address':this.props.resource.bcAddress,'name':this.props.resource.name}
+                          },
+                          service:{
+                              'takeover':this.props.service[0],
+                              'shipTo':this.props.service[1],
+                              'shipFrom':this.props.service[2]
+                          }
+                      }
+                            
+
+                      }}}
+                    >
                         Hire 
-                      </Button>: 
+                      </Link>: 
                       <div></div>                  
                     }
 

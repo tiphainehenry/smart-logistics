@@ -170,7 +170,6 @@ contract Elect is usingProvable {
 
     function severalDaysAvailability(uint[] memory _person, uint[] memory _availability) public payable returns(uint){
         
-        
         Date memory ASDate = Date(_person[1],_person[2],_person[3]);  // available start
         Date memory AEDate = Date(_person[4],_person[5],_person[6]); //available end
 

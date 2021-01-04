@@ -55,7 +55,6 @@ contract Hire {
         tenants.consignor = _ppl[1];
         
         issuanceDate = _issuanceDate;
-        
 
         service.shipFrom = _shipInfo[0];
         service.shipTo = _shipInfo[1]; 
