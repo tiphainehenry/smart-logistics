@@ -3,7 +3,7 @@ import {Button, Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import {
-  Link
+  Link, withRouter, BrowserRouter
 } from 'react-router-dom';
 
 
@@ -29,6 +29,7 @@ class ResourceId extends React.Component {
 
     this.hireCandidate = this.hireCandidate.bind(this);
   };
+
 
   componentDidMount(){
     var equips = [];
@@ -79,6 +80,10 @@ class ResourceId extends React.Component {
   async hireCandidate(){
     //alert(this.props.sc[1][0]+ " is hiring " + this.props.resource.name + " on " +this.props.service[0].replace(',','/'));
     console.log(this.props.service);
+
+    this.props.history.push({ pathname: '/empty' });
+    this.props.history.replace({ pathname: '/mycontracts' });
+
   }
 
 
@@ -96,25 +101,32 @@ class ResourceId extends React.Component {
                     <div className="d-flex justify-content-between align-items-center">
 
                       {this.props.hire?
-                      <Link variant="primary" onClick={this.hireCandidate}
-                      to={{pathname:'/mycontracts', state: {
-                        info:{
-                          tenants:{
-                            'consignee':{'address':this.props.sc[1][0], 'name':'consigneeName'}, 
-                            'consignor':{'address':this.props.resource.bcAddress,'name':this.props.resource.name}
-                          },
-                          service:{
-                              'takeover':this.props.service[0],
-                              'shipTo':this.props.service[1],
-                              'shipFrom':this.props.service[2]
-                          }
-                      }
-                            
 
-                      }}}
-                    >
-                        Hire 
-                      </Link>: 
+
+                    <BrowserRouter forceRefresh={true}>
+                      <Link variant="primary" onClick={this.hireCandidate}
+                                            to={{pathname:'/mycontracts', key: Math.random,state: {
+                                              info:{
+                                                tenants:{
+                                                  'consignee':{'address':this.props.sc[1][0], 'name':'consigneeName'}, 
+                                                  'consignor':{'address':this.props.resource.bcAddress,'name':this.props.resource.name}
+                                                },
+                                                service:{
+                                                    'takeover':this.props.service[0],
+                                                    'shipTo':this.props.service[1],
+                                                    'shipFrom':this.props.service[2]
+                                                },
+                                                hiring:true
+                                            }
+                                                  
+
+                                            }}}
+                                          >                        Hire 
+                      </Link>
+                    </BrowserRouter>
+
+
+: 
                       <div></div>                  
                     }
 
@@ -126,5 +138,5 @@ class ResourceId extends React.Component {
   
 }};
 
-export default ResourceId
+export default withRouter(ResourceId)
 

@@ -34,5 +34,9 @@
   background-color: #faf89f;
 }
 
+.bg-idheader {
+    background-color: #f1f1f1!important;
+    padding:.475rem .635rem;
+}
 
 /*# sourceMappingURL=boosted.min.css.map */

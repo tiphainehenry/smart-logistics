@@ -46,7 +46,7 @@ contract Hire {
     
     
     event NewAggreement(string message);
-
+    
 
     //////// DB Manager
 
@@ -81,7 +81,21 @@ contract Hire {
     }
      
     function seeAggreement(uint i) public view returns (Aggreement memory)  {
-        return aggreements[i];
+
+        if((aggreements[i].ppl.consignee == msg.sender) || (aggreements[i].ppl.consignor == msg.sender)){
+            return aggreements[i];
+        }
+        else{
+            Tenants memory fakeTenants = Tenants(address(0),address(0));
+            Service memory fakeService = Service('','','');
+            Merchandise memory fakeMerchandise = Merchandise('',0,0,0);
+            string[] memory fakeComment;
+
+            Aggreement memory fakeAggreement = Aggreement('', fakeTenants, fakeService, fakeMerchandise, fakeComment, '');
+
+            return fakeAggreement;
+
+        }
     }
 
     

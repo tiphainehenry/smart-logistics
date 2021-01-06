@@ -22,8 +22,8 @@ class MyContracts extends React.Component {
     this.state = {
 
       tenants : {
-        'consignee': {'address':'0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8', 'name':'Orange'},
-        'consignor': {'address':'0x3b8e54c2E7Bb38ffeb8Ddc9511461C6691Ff52A8', 'name': 'FM logistics'}
+        'consignee': {'address':'0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB', 'name':'Orange'},
+        'consignor': {'address':'0x5AfBDd0e5DE3315a96504C06ac49bF34B5ECACB5', 'name': 'FM logistics'}
       },
 
       //consigneeLoc: '140 Avenue de la République 92230 Chatillon',
@@ -33,6 +33,7 @@ class MyContracts extends React.Component {
       //consigneeCompany: 'Orange',
       //consignorCompany:'Nespresso',
       //carrierCompany:'FM Logistic',
+
 
       service : {
         shipFrom:'4 Rue du Clos Courtel, 35510 Cesson-Sévigné',
@@ -47,11 +48,17 @@ class MyContracts extends React.Component {
         volume:'',   
       },
 
+
+
       comments:'',
 
       aggreements: [],
 
-      storedContracts: []
+      storedContracts: [],
+
+      hiring: false, 
+
+      owner: ''
 
     };
 
@@ -76,22 +83,25 @@ class MyContracts extends React.Component {
   };
 
 
-  componentDidMount(){
+
+
+  async componentDidMount(){
 
     var today = new Date();
     var date =  (today.getMonth() + 1) + '/' + today.getDate() + '/' +  today.getFullYear();
 
+    this.setState({'issuanceDate':date.toString()});
 
     const { info } = this.props.location.state  || '';
     if (typeof info !== "undefined") {
       //const { service } = this.state.service;
     
-      console.log(info);
-      this.setState({'issuanceDate':date.toString(), 'tenants':info.tenants, 'service':info.service});
-
+      this.setState({'tenants':info.tenants, 'service':info.service});
+      
     }
-
+  
   }
+
 
   async componentWillMount(){
     
@@ -112,8 +122,15 @@ class MyContracts extends React.Component {
 
       this.setState({ web3, accounts, contract: instance });
 
-      
+      this.setState({ owner: accounts[0] });
+        
       this.getCommands();
+
+      instance.events.NewAggreement().on('data', (event) => {
+        console.log(event);
+        this.getCommands();
+      })
+
 
 
     } catch (error) {
@@ -125,6 +142,53 @@ class MyContracts extends React.Component {
     };
   }
 
+  async getCommands(){
+    this.setState({ owner: this.state.accounts[0] });
+
+    const numcommand = await this.state.contract.methods.totalAggreements().call();
+
+    if(numcommand>0){
+      var index = 0;
+      var storedCtrs = [];
+
+      for(var i=0;i<numcommand;i++){
+        var seeAggreement = await this.state.contract.methods.seeAggreement(i).call();
+
+        if ((seeAggreement[1][0]!="0x0000000000000000000000000000000000000000") && 
+            (seeAggreement.ppl[1][1]!="0x0000000000000000000000000000000000000000")){
+          seeAggreement.push(index);
+          console.log(seeAggreement)
+
+          index++;
+
+          storedCtrs.push(seeAggreement);
+          this.setState({storedContracts: storedCtrs});
+  
+        }
+
+      }
+    }
+  }
+
+  async handleRegistration(){
+    alert('loaded web3');
+
+    console.log(this.state.service);
+    // Get network provider and web3 instance.
+
+    //console.log([this.state.tenants.consignee.address,this.state.tenants.consignor.address],this.state.issuanceDate,
+    //  [this.state.service.shipFrom,this.state.service.shipTo, this.state.service.takeover], this.state.merchandise.nature, 
+    //  [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume]);
+
+
+    await this.state.contract.methods.addAggreement(
+      [this.state.tenants.consignee.address,this.state.tenants.consignor.address],
+      this.state.issuanceDate,
+      [this.state.service.shipFrom,this.state.service.shipTo, this.state.service.takeover], 
+      this.state.merchandise.nature, 
+      [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume] 
+       ).send({ from: this.state.accounts[0] });  
+  }
 
 
 
@@ -250,64 +314,31 @@ class MyContracts extends React.Component {
   }
 
 
-  async getCommands(){
-    const numcommand = await this.state.contract.methods.totalAggreements().call();
-
-    if(numcommand>0){
-      for(var i=0;i<numcommand;i++){
-        var seeAggreement = await this.state.contract.methods.seeAggreement(i).call();
-        seeAggreement.push(i);
-
-        var storedCtrs = this.state.storedContracts;
-
-        storedCtrs.push(seeAggreement);
-        this.setState({storedContracts: storedCtrs});
-
-        console.log(seeAggreement)
-      }
-    }
-  }
-
-  async handleRegistration(){
-    alert('loaded web3');
-
-    console.log(this.state.service);
-    // Get network provider and web3 instance.
-
-    //console.log([this.state.tenants.consignee.address,this.state.tenants.consignor.address],this.state.issuanceDate,
-    //  [this.state.service.shipFrom,this.state.service.shipTo, this.state.service.takeover], this.state.merchandise.nature, 
-    //  [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume]);
-
-
-    await this.state.contract.methods.addAggreement(
-      [this.state.tenants.consignee.address,this.state.tenants.consignor.address],
-      this.state.issuanceDate,
-      [this.state.service.shipFrom,this.state.service.shipTo, this.state.service.takeover], 
-      this.state.merchandise.nature, 
-      [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume] 
-       ).send({ from: this.state.accounts[0] });  
-  }
 
   
   render(){return <div>
     <Header/>
+    <div className='bg-idheader'> My ETH address: {this.state.owner} </div>
     <div className="discovery-module-one-pop-out py-5 py-lg-3">
 
 <div className="container">
+
+<br/>
+
+
 <table id="news-table" class="table tablesorter mb-5">
           <caption>
             My Contracts.
           </caption>
           <thead class="cf">
             <tr>
-
               <th scope="col" class="header">ID</th>
               <th scope="col" class="header">IssuanceDate</th>
               <th scope="col" class="header">Status</th>
               <th scope="col" class="header">Tenants</th>
               <th scope="col" class="header">Service</th>
               <th scope="col" class="header">Merchandise</th>
-              <th scope="col" class="header">Actions</th>
+              <th scope="col" class="header"></th>
 
             </tr>
           </thead>

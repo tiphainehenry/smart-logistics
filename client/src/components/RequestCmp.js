@@ -185,7 +185,7 @@ class RequestCmp extends React.Component {
       })
       .on('error', console.error);
 
-      this.setState({hasCandidates:true,bestProfiles:[[1, 1445],[11, 1012],[10, 1012]]})  
+      this.setState({hasCandidates:true,bestProfiles:[[1, 1445],[7, 1012],[4, 1012]]})  
 
 
   
