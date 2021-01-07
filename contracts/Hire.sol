@@ -46,6 +46,7 @@ contract Hire {
     
     
     event NewAggreement(string message);
+    event Request(address sender, address consignee, address consignor);
     
 
     //////// DB Manager
@@ -80,9 +81,14 @@ contract Hire {
         return aggreements.length;
     }
      
-    function seeAggreement(uint i) public view returns (Aggreement memory)  {
+    function seeAggreement(uint i) public payable returns (Aggreement memory)  {
 
-        if((aggreements[i].ppl.consignee == msg.sender) || (aggreements[i].ppl.consignor == msg.sender)){
+        emit Request(msg.sender, aggreements[i].ppl.consignee, aggreements[i].ppl.consignor);
+
+        if(aggreements[i].ppl.consignee == msg.sender){
+            return aggreements[i];
+        } 
+        else if(aggreements[i].ppl.consignor == msg.sender){
             return aggreements[i];
         }
         else{

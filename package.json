@@ -20,7 +20,8 @@
     "@chainlink/contracts": "^0.0.8",
     "@openzeppelin/contracts": "^3.1.0",
     "@truffle/hdwallet-provider": "^1.0.40",
-    "ethereum-bridge": "^0.6.2"
+    "ethereum-bridge": "^0.6.2",
+    "react-ga": "^3.3.0"
   },
   "devDependencies": {
     "@chainlink/belt": "^0.0.1",

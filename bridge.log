@@ -11295,3 +11295,11 @@
 {"level":"debug","message":"latest block seen (config file) -1","timestamp":"2021-01-06T10:58:24.194Z"}
 {"level":"warn","message":"re-org block listen is disabled","timestamp":"2021-01-06T10:58:24.199Z"}
 {"level":"info","message":"Listening @ 0x6af172b1fba6655d2efadf9274ce7b639a66c006 (Oraclize Connector)\n","timestamp":"2021-01-06T10:58:24.200Z"}
+{"defaultnode":"http://127.0.0.1:8545","account":"9","HOST":"127.0.0.1","port":"8545","dev":true,"gas":3700000,"confirmation":12,"disable-deterministic-oar":false,"loglevel":"info","non-interactive":false,"enable-stats":false,"no-hints":false,"gasprice":20000000000,"logFilePath":"./bridge.log","confirmations":12,"skipQueries":true,"defaultGas":3700000,"level":"debug","message":"parsed options","timestamp":"2021-01-07T08:57:49.277Z"}
+{"level":"warn","message":"--dev mode active, contract myid checks and pending queries are skipped, use this only when testing, not in production","timestamp":"2021-01-07T08:57:49.280Z"}
+{"level":"info","message":"you are running ethereum-bridge - version: 0.6.2","timestamp":"2021-01-07T08:57:49.281Z"}
+{"level":"info","message":"saving logs to: ./bridge.log","timestamp":"2021-01-07T08:57:49.285Z"}
+{"level":"info","message":"using active mode","timestamp":"2021-01-07T08:57:49.286Z"}
+{"level":"info","message":"Connecting to eth node http://127.0.0.1:8545","timestamp":"2021-01-07T08:57:49.286Z"}
+{"level":"debug","message":"check bridge version body result","timestamp":"2021-01-07T08:57:49.367Z"}
+{"level":"error","message":"http://127.0.0.1:8545 ethereum node not found, are you sure is it running?\n if you are using:\n * geth, append: --rpc --rpccorsdomain=\"*\" --rpcaddr=\"127.0.0.1\" --rpcport=\"8545\"\n * parity, append: --geth --jsonrpc-hosts all --rpcaddr 127.0.0.1 --rpcport 8545 \n * ethereumjs-testrpc, try: testrpc -h 127.0.0.1 -p 8545\n\ncheck also if your node or this machine is allowed to connect (firewall, port, etc..)\n","timestamp":"2021-01-07T08:57:49.907Z"}
