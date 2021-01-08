@@ -129,8 +129,9 @@ class RequestCmp extends React.Component {
       this.setState({ web3, accounts, contract: instance });
 
       /// Check oracle balance
-      const balance = await this.state.web3.eth.getBalance('0x70aBC4B671EF3667EcF975F23BCed8c5AEa6E33e');
+      const balance = await this.state.web3.eth.getBalance(this.state.provableAddress);
       this.setState({'balance': balance});
+      console.log('Current Oracle balance is '+ balance.toString());
 
 
       // update candidates (mockup environment)
@@ -139,7 +140,6 @@ class RequestCmp extends React.Component {
       //window.alert(bcCandidates);
 
 
-      //console.log('Current balance is '+ balance.toString());
   
       if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
@@ -359,7 +359,7 @@ class RequestCmp extends React.Component {
   }
 
   async FundContract(){
-    const balance = await this.state.web3.eth.getBalance('0x70aBC4B671EF3667EcF975F23BCed8c5AEa6E33e');
+    const balance = await this.state.web3.eth.getBalance(this.state.provableAddress);
     console.log('Current balance is '+ balance.toString());
 
 
