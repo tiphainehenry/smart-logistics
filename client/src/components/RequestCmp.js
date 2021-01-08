@@ -41,8 +41,9 @@ class RequestCmp extends React.Component {
 
       balance:0,
 
-      //provableAddress: '0x552fABb7F71A1dA341791DD4eFf51527349D0dF7'
-      provableAddress: "0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB"
+      //provableAddress: '0x87b2729580a0842be45e2cb6b7c564d0989fde18' // for ganache
+
+      provableAddress: '0xBcB81ae97446B6946a72A07d35b2849fc5C68455' // for ganache
 
     };
 
@@ -63,7 +64,7 @@ class RequestCmp extends React.Component {
 
 
 
-  computeProfileMatrix(){
+  computeProfileMatrix(){  // mockup environment
     var candidateMatrix = [];
     for (var i=0; i<candidates.length;i++){
       var elem = candidates[i];
@@ -130,18 +131,15 @@ class RequestCmp extends React.Component {
       this.setState({ web3, accounts, contract: instance });
 
       /// Check oracle balance
+      var elect_address = instance.options.address;
       const balance = await this.state.web3.eth.getBalance(this.state.provableAddress);
-      this.setState({'balance': balance});
+      this.setState({'balance': balance, provableAddress: elect_address});
       console.log('Current Oracle balance is '+ balance.toString());
-
 
       // update candidates (mockup environment)
       const bcCandidates = await instance.methods.getCandidates().call();
 
-      //window.alert(bcCandidates);
 
-
-  
       if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
@@ -230,60 +228,6 @@ class RequestCmp extends React.Component {
 
       this.askSCSort();
 
-      if(false){
-        // DISTANCE.DURATION
-        if(this.state.pickupAddress !== ''){
-          axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
-            (response) => { 
-                var result = response.data; 
-
-                var pickupCoordsLat = result['results'][0]['locations'][0]['displayLatLng'].lat;
-                var pickupCoordsLng = result['results'][0]['locations'][0]['displayLatLng'].lng;
-
-                this.setState({pickupCoords:{
-                  lat:pickupCoordsLat,
-                  lng:pickupCoordsLng}});
-
-
-                var locationList = [[pickupCoordsLng, pickupCoordsLat]];
-                for(var i=0; i<candidates.length; i++){
-                    locationList.push([candidates[i].long, candidates[i].lat]);
-                }  
-            
-                axios.post("https://api.openrouteservice.org/v2/matrix/driving-car",{locations:locationList, sources:[0],"metrics":["distance","duration"]},{
-                    headers: {Authorization: openrouteservice}
-                  }).then( 
-                    (response) => { 
-                        var result = response.data; 
-
-                        var dists = result["durations"][0];
-                        var durations = result["distances"][0];
-            
-                        //var ratio = Math.max.apply(Math, dists) / 100;
-                        
-                        for (var i = 0; i < dists.length; i++) {
-                          dists[i] = Math.round(100*dists[i]);
-                          durations[i] = Math.round(100*durations[i]);
-                        }
-
-                        this.setState({'dists':dists, 'durations':durations});
-
-
-                        this.askSCSort();
-                    }, 
-                    (error) => { 
-                        console.log(error); 
-                    }) 
-            }, 
-            (error) => { 
-                console.log(error); 
-            }
-        );     
-        }
-          else{
-            alert('Fill in the pickup address');
-          }
-        }
       }
 
       else{
