@@ -41,7 +41,7 @@ class RequestCmp extends React.Component {
 
       balance:0,
 
-      provableAddress: '0xAFF34D9D34A77791D347b7c5Df3F13F183121C47'
+      provableAddress: '0xEC104Ea2473fC88bE4aDa5852acdf643825Af7F3'
 
     };
 
@@ -136,13 +136,12 @@ class RequestCmp extends React.Component {
       // update candidates (mockup environment)
       const bcCandidates = await instance.methods.getCandidates().call();
 
-      console.log(bcCandidates);
+      //window.alert(bcCandidates);
 
 
       //console.log('Current balance is '+ balance.toString());
   
-
-      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){
+      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
