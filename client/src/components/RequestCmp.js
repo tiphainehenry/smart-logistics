@@ -41,7 +41,7 @@ class RequestCmp extends React.Component {
 
       balance:0,
 
-      provableAddress: '0xEC104Ea2473fC88bE4aDa5852acdf643825Af7F3'
+      provableAddress: '0x552fABb7F71A1dA341791DD4eFf51527349D0dF7'
 
     };
 
@@ -294,7 +294,7 @@ class RequestCmp extends React.Component {
 
   async askSCSort(){
     const bcCandidates = await this.state.contract.methods.getCandidates().call();
-    console.log(bcCandidates);
+    //console.log(bcCandidates);
 
 
     // send to BC
