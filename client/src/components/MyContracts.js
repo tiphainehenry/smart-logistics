@@ -13,6 +13,9 @@ import Footer from "./Footer";
 import Hire from '../contracts/Hire.json';
 import getWeb3 from '../getWeb3';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('G-PH4XZ4P2BZ');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 class MyContracts extends React.Component {
 
