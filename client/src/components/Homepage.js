@@ -1,15 +1,7 @@
 
-import React, {Row, Col, Component, useState } from "react";
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-
-import SimpleStorage from "../contracts/SimpleStorage.json";
-import getWeb3 from "../getWeb3";
+import React, { Component } from "react";
 
 import "../css/boosted.min.css";
-
-import DatePicker from "react-datepicker";
 
 import Header from "./Header";
 import Footer from "./Footer";

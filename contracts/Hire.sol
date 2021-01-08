@@ -42,8 +42,9 @@ contract Hire {
         string status;
     }
 
-    Aggreement[] public aggreements;
+    Aggreement[] aggreements;
     
+    //string public contractState;
     
     event NewAggreement(string message);
     event Request(address sender, address consignee, address consignor);
@@ -81,15 +82,30 @@ contract Hire {
         return aggreements.length;
     }
      
-    function seeAggreement(uint i) public payable returns (Aggreement memory)  {
+    function getSender() public view returns(address){
+        return msg.sender;
+    }
+     
+    function seeAggreement(uint i, address sender) public view returns (address[2] memory _ppl, string memory _issuanceDate, string[3] memory _shipInfo, string memory _nature, uint[3] memory _details, string memory _status) {
 
-        emit Request(msg.sender, aggreements[i].ppl.consignee, aggreements[i].ppl.consignor);
+        //emit Request(msg.sender, aggreements[i].ppl.consignee, aggreements[i].ppl.consignor);
 
-        if(aggreements[i].ppl.consignee == msg.sender){
-            return aggreements[i];
+        if(aggreements[i].ppl.consignee == sender){
+        //    contractState =  "consignee";
+            return ([aggreements[i].ppl.consignee, aggreements[i].ppl.consignor], aggreements[i].issuance, 
+                    [aggreements[i].srv.shipFrom, aggreements[i].srv.shipTo, aggreements[i].srv.takeoverDate],
+                    aggreements[i].mrch.nature,  [aggreements[i].mrch.quantity, aggreements[i].mrch.grossWeight,aggreements[i].mrch.grossVolume],
+                    aggreements[i].status
+            );
         } 
-        else if(aggreements[i].ppl.consignor == msg.sender){
-            return aggreements[i];
+        else if(aggreements[i].ppl.consignor == sender){
+        //    contractState = "consignor";
+        
+        ([aggreements[i].ppl.consignee, aggreements[i].ppl.consignor], aggreements[i].issuance, 
+                    [aggreements[i].srv.shipFrom, aggreements[i].srv.shipTo, aggreements[i].srv.takeoverDate],
+                    aggreements[i].mrch.nature,  [aggreements[i].mrch.quantity, aggreements[i].mrch.grossWeight,aggreements[i].mrch.grossVolume],
+                    aggreements[i].status
+            );
         }
         else{
             Tenants memory fakeTenants = Tenants(address(0),address(0));
@@ -98,8 +114,14 @@ contract Hire {
             string[] memory fakeComment;
 
             Aggreement memory fakeAggreement = Aggreement('', fakeTenants, fakeService, fakeMerchandise, fakeComment, '');
-
-            return fakeAggreement;
+        //    contractState = "wrong address";
+        
+            return ([fakeAggreement.ppl.consignee, fakeAggreement.ppl.consignor], fakeAggreement.issuance, 
+                    [fakeAggreement.srv.shipFrom, fakeAggreement.srv.shipTo, fakeAggreement.srv.takeoverDate],
+                    fakeAggreement.mrch.nature, [fakeAggreement.mrch.quantity, fakeAggreement.mrch.grossWeight, fakeAggreement.mrch.grossVolume],
+                    fakeAggreement.status
+            );
+            
 
         }
     }

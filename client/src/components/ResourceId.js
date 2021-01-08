@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Navbar, Nav, NavDropdown} from 'react-bootstrap';
+//import {Button, Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import {
@@ -34,7 +34,7 @@ class ResourceId extends React.Component {
   componentDidMount(){
     var equips = [];
     for(var i=0;i<this.props.resource.equipment.length;i++){
-      if(this.props.resource.equipment[i].equip_id == 1){
+      if(this.props.resource.equipment[i].equip_id === 1){
         equips.push(this.props.resource.equipment[i].equip_name)
       }
     }
@@ -89,7 +89,7 @@ class ResourceId extends React.Component {
 
   render(){return <div key={this.props.resource.name} className="col-md-4">
           <div className="card mb-4 shadow-sm">
-              <img className="bd-placeholder-img card-img-top" src={this.props.resource.picture} alt='Profile Picture'/>
+              <img className="bd-placeholder-img card-img-top" src={this.props.resource.picture} alt='Profile'/>
               <div className="card-header">{this.props.resource.name}</div>  
                   <div className="card-body">
                     {this.props.QoS?  <h2>QoS: {this.props.QoS}</h2>: <div></div>  }

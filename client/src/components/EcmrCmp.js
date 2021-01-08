@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Card, ListGroup, Tab, Tabs, Table, Row, Col, Form, Button} from 'react-bootstrap';
+import React from 'react';
+import {Card, ListGroup, Row, Col, Button} from 'react-bootstrap';
 import '../css/boosted.min.css';
 import '../css/App.css';
 
@@ -139,7 +139,7 @@ class EcmrCmp extends React.Component {
 
   async instanciateSC(){
 
-    if(this.props.takeover !=''){
+    if(this.props.takeover !==''){
       await this.state.contract.methods.initializeTenants(this.props.consigneeETH, this.state.consignee.lat.toString(), this.state.consignee.lng.toString(),
         this.props.consignorETH, this.state.consignor.lat.toString(), this.state.consignor.lng.toString(),
         this.props.carrierETH, this.state.carrier.lat.toString(), this.state.carrier.lng.toString(), 
@@ -191,7 +191,7 @@ class EcmrCmp extends React.Component {
     <h1 id="sysInfo">ECMR vizualization.</h1>
     <hr/>
 
-    {(this.state.command!=[])?     <Card style={{height:'90%','marginTop':'3vh'}}>
+    {(this.state.command!==[])?     <Card style={{height:'90%','marginTop':'3vh'}}>
       <Card.Header>
         
       <Row>

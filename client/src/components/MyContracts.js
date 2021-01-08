@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Tab, Tabs, Row, Col, Form, Button} from 'react-bootstrap';
+import React from 'react';
+import {Tab, Tabs, Col, Form, Button, Spinner} from 'react-bootstrap';
 import '../css/boosted.min.css';
 import '../css/App.css';
 
@@ -58,7 +58,9 @@ class MyContracts extends React.Component {
 
       hiring: false, 
 
-      owner: ''
+      owner: '',
+
+      BCQuery:false
 
     };
 
@@ -80,6 +82,9 @@ class MyContracts extends React.Component {
 
     this.handleRegistration = this.handleRegistration.bind(this);
     this.getCommands = this.getCommands.bind(this);
+
+    this.refreshBCQuery = this.refreshBCQuery.bind(this);
+
   };
 
 
@@ -112,6 +117,8 @@ class MyContracts extends React.Component {
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
 
+
+
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = Hire.networks[networkId];
@@ -128,9 +135,9 @@ class MyContracts extends React.Component {
 
       instance.events.NewAggreement().on('data', (event) => {
         console.log(event);
+        this.refreshBCQuery();
         this.getCommands();
       })
-
 
 
     } catch (error) {
@@ -143,26 +150,39 @@ class MyContracts extends React.Component {
   }
 
   async getCommands(){
-    this.setState({ owner: this.state.accounts[0] });
-
+    this.setState({ owner: this.state.accounts[0], storedContracts: [] });    
     const numcommand = await this.state.contract.methods.totalAggreements().call();
+
+    //window.alert(this.state.accounts[0]);
+
+    //const sender = await this.state.contract.methods.getSender().call();
+    //window.alert('there are ' + numcommand + ' registered on the blockain');
 
     if(numcommand>0){
       var index = 0;
       var storedCtrs = [];
 
       for(var i=0;i<numcommand;i++){
-        var seeAggreement = await this.state.contract.methods.seeAggreement(i).call();
+        var seeAggreement = await this.state.contract.methods.seeAggreement(i, this.state.accounts[0]).call(); // added state accounts to paliate metamask bug (address not updated)
 
-        if ((seeAggreement[1][0]!="0x0000000000000000000000000000000000000000") && 
-            (seeAggreement.ppl[1][1]!="0x0000000000000000000000000000000000000000")){
-          seeAggreement.push(index);
-          console.log(seeAggreement)
+        if ((seeAggreement[0][0]!=="0x0000000000000000000000000000000000000000") && 
+            (seeAggreement[0][1]!=="0x0000000000000000000000000000000000000000")){
 
-          index++;
+            
+            var registereed_aggreement = [];
 
-          storedCtrs.push(seeAggreement);
-          this.setState({storedContracts: storedCtrs});
+            registereed_aggreement.push(index);
+            registereed_aggreement.push(seeAggreement[0]); // tenants
+            registereed_aggreement.push(seeAggreement[1]); // issuancedate
+            registereed_aggreement.push(seeAggreement[2]); // shipinfo
+            registereed_aggreement.push(seeAggreement[3]); // nature
+            registereed_aggreement.push(seeAggreement[4]); // merch_details
+            registereed_aggreement.push(seeAggreement[5]); // status
+
+            index++;
+
+            storedCtrs.push(registereed_aggreement);
+            this.setState({storedContracts: storedCtrs});
   
         }
 
@@ -171,9 +191,9 @@ class MyContracts extends React.Component {
   }
 
   async handleRegistration(){
-    alert('loaded web3');
 
-    console.log(this.state.service);
+    this.refreshBCQuery();
+
     // Get network provider and web3 instance.
 
     //console.log([this.state.tenants.consignee.address,this.state.tenants.consignor.address],this.state.issuanceDate,
@@ -190,6 +210,9 @@ class MyContracts extends React.Component {
        ).send({ from: this.state.accounts[0] });  
   }
 
+  refreshBCQuery = () => {
+    this.setState({BCQuery: !this.state.BCQuery});
+  }
 
 
   handleTakeover = (e) =>{
@@ -326,45 +349,45 @@ class MyContracts extends React.Component {
 <br/>
 
 
-<table id="news-table" class="table tablesorter mb-5">
+<table id="news-table" className="table tablesorter mb-5">
           <caption>
             My Contracts.
           </caption>
-          <thead class="cf">
-            <tr>
-              <th scope="col" class="header">ID</th>
-              <th scope="col" class="header">IssuanceDate</th>
-              <th scope="col" class="header">Status</th>
-              <th scope="col" class="header">Tenants</th>
-              <th scope="col" class="header">Service</th>
-              <th scope="col" class="header">Merchandise</th>
-              <th scope="col" class="header"></th>
+          <thead className="cf">
+            <tr key={0}>
+              <th scope="col" className="header">ID</th>
+              <th scope="col" className="header">IssuanceDate</th>
+              <th scope="col" className="header">Status</th>
+              <th scope="col" className="header">Tenants</th>
+              <th scope="col" className="header">Service</th>
+              <th scope="col" className="header">Merchandise</th>
+              <th scope="col" className="header"></th>
 
             </tr>
           </thead>
           <tbody>
           {this.state.storedContracts.map(i=> 
-            <tr>
-            <td class="align-middle">{i[6]}</td>
-            <td class="align-middle">{i[0]}</td>
-            <td class="align-middle">{i[5]}</td>
+            <tr key={i[0]}>
+            <td className="align-middle">{i[0]}</td>
+            <td className="align-middle">{i[2]}</td>
+            <td className="align-middle">{i[6]}</td>
 
-            <td class="align-middle">
+            <td className="align-middle">
               <b>Consignee:</b> {i[1][0]}
               <br/>
               <b>Consignor:</b> {i[1][1]}
             </td>
-            <td class="align-middle">
+            <td className="align-middle">
               
-            <b>ShipFrom:</b> {i[2][0]}<br/>
-            <b>ShipTo:</b> {i[2][1]}<br/>
-            <b>TakeoverDate:</b> {i[2][2]}
+            <b>ShipFrom:</b> {i[3][0]}<br/>
+            <b>ShipTo:</b> {i[3][1]}<br/>
+            <b>TakeoverDate:</b> {i[3][2]}
             </td>
-            <td class="align-middle">{i[3][0]} (#{i[3][1]}). {i[3][2]}m3-{i[3][3]}Kg.</td>
+            <td className="align-middle">{i[4]} (#{i[5][0]}). {i[5][1]}m3-{i[5][2]}Kg.</td>
 
-            <td class="align-middle">
-                <a href="#" class="btn btn-sm btn-secondary">Monitor</a>
-                <a href="#" class="btn btn-sm btn-secondary">Delegate</a>
+            <td className="align-middle">
+                <Button className="btn btn-sm btn-secondary">Monitor</Button>
+                <Button href="#" className="btn btn-sm btn-secondary">Delegate</Button>
              </td>
 
 
@@ -471,7 +494,22 @@ class MyContracts extends React.Component {
     </Tab>
   </Tabs>
       <div><br/>
-        <Button onClick={this.handleRegistration}>Register aggreement on the blockchain</Button>
+        <Button onClick={this.handleRegistration}>Register aggreement on the blockchain</Button>    {' '}
+
+{this.state.BCQuery?     <Button variant="primary" disabled>
+                            <Spinner
+                              as="span"
+                              animation="border"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                            />
+                            <span className="sr-only">Loading...</span>
+                          </Button>
+                        : 
+                        <div></div>    
+}
+
         <p>
           If the aggreement information is correct, please click this button.
         </p>

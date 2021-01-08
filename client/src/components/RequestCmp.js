@@ -8,8 +8,6 @@ import getWeb3 from '../getWeb3';
 import ResourceId from "./ResourceId";
 import axios from 'axios';
 
-import $ from 'jquery'; 
-
 const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
 const openrouteservice = require("../../package.json")["openrouteservice"];
 
@@ -41,7 +39,9 @@ class RequestCmp extends React.Component {
       bestProfiles:[],
       BCQuery:false,
 
-      hasCandidates:0
+      balance:0,
+
+      provableAddress: '0xAFF34D9D34A77791D347b7c5Df3F13F183121C47'
 
     };
 
@@ -128,9 +128,21 @@ class RequestCmp extends React.Component {
 
       this.setState({ web3, accounts, contract: instance });
 
+      /// Check oracle balance
+      const balance = await this.state.web3.eth.getBalance('0x70aBC4B671EF3667EcF975F23BCed8c5AEa6E33e');
+      this.setState({'balance': balance});
+
+
+      // update candidates (mockup environment)
       const bcCandidates = await instance.methods.getCandidates().call();
 
-      if ((bcCandidates == null) | ((bcCandidates != null) && (bcCandidates.length != this.state.candidateMatrix.length))){
+      console.log(bcCandidates);
+
+
+      //console.log('Current balance is '+ balance.toString());
+  
+
+      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
@@ -146,17 +158,17 @@ class RequestCmp extends React.Component {
   
         this.refreshBCQuery();
         var hasCandidates=0;
-        if(event.returnValues[0]=='No matching found'){
+        if(event.returnValues[0]==='No matching found'){
           hasCandidates=2;
         }
-        else if(event.returnValues[0]=='Matching'){
+        else if(event.returnValues[0]==='Matching'){
           hasCandidates=1;
         }
         else{
           hasCandidates=0;
         }
 
-        if (event.returnValues[1] != ""){
+        if (event.returnValues[1] !== ""){
           var qosresults = event.returnValues[1].split("Profiles': '")[1].slice(0, -2).split('], ');
 
           // convert to array
@@ -185,7 +197,7 @@ class RequestCmp extends React.Component {
       })
       .on('error', console.error);
 
-      this.setState({hasCandidates:true,bestProfiles:[[1, 1445],[7, 1012],[4, 1012]]})  
+      //this.setState({hasCandidates:true,bestProfiles:[[1, 1445],[7, 1012],[4, 1012]]})  
 
 
   
@@ -201,7 +213,7 @@ class RequestCmp extends React.Component {
   async handleSubmitBC(e){
     e.preventDefault();
 
-    if(this.props.availability !=''){
+    if(this.props.availability !==''){
 
       this.refreshBCQuery();
 
@@ -220,7 +232,7 @@ class RequestCmp extends React.Component {
 
       if(false){
         // DISTANCE.DURATION
-        if(this.state.pickupAddress != ''){
+        if(this.state.pickupAddress !== ''){
           axios.post(`http://open.mapquestapi.com/geocoding/v1/address?key=`+opengeocodingAPI+"&location="+this.state.pickupAddress).then( 
             (response) => { 
                 var result = response.data; 
@@ -348,14 +360,15 @@ class RequestCmp extends React.Component {
   }
 
   async FundContract(){
-    const balance = await this.state.web3.eth.getBalance('0x87B2729580A0842BE45E2CB6b7C564d0989FDE18');
+    const balance = await this.state.web3.eth.getBalance('0x70aBC4B671EF3667EcF975F23BCed8c5AEa6E33e');
     console.log('Current balance is '+ balance.toString());
 
+
     await this.state.web3.eth.sendTransaction({
-        from: '0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB',
-        to: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18',
+        from: this.state.accounts[0],
+        to: this.state.provableAddress,
         value: this.state.web3.utils.toWei('1', 'ether'),
-        data: '0x87B2729580A0842BE45E2CB6b7C564d0989FDE18'
+        data: this.state.accounts[0]
           })
   }
 
@@ -367,9 +380,15 @@ class RequestCmp extends React.Component {
       Filter and Sort 
     </Button>
     {' '}
+
+    {this.state.balance < 10000000 ? 
     <Button variant="primary" type="submit" onClick={this.FundContract}>
-      Fund Oracle
+    Fund Oracle
+    </Button>:
+    <Button variant="primary" type="submit" onClick={this.FundContract} disabled>
+        Fund Oracle
     </Button>
+    }
     {' '}
 
     {this.state.BCQuery?     <Button variant="primary" disabled>
@@ -386,7 +405,7 @@ class RequestCmp extends React.Component {
                             <div></div>    
     }
 
-  {this.state.hasCandidates==1?    
+  {this.state.hasCandidates===1?    
                   <div className="album py-5 bg-yellow">
                      <div className="container">
                      <h2>Three Best Matches</h2>
@@ -402,7 +421,7 @@ class RequestCmp extends React.Component {
                   </div>         
                   </div>
                   </div> : 
-    this.state.hasCandidates==2? <div className="album py-5">
+    this.state.hasCandidates===2? <div className="album py-5">
                               <div className="container">
                                   <p>No matching candidates, retry with other configuration? </p>
                               </div>  

@@ -1,25 +1,19 @@
 import React from 'react';
-import {Tab, Tabs, Col, Form, Button} from 'react-bootstrap';
+import {Tab, Tabs, Form} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 
-import Elect from '../contracts/Elect.json';
-import getWeb3 from '../getWeb3';
-
-import axios from 'axios';
-
 import Header from "./Header";
 import Footer from "./Footer";
-import ResourceId from "./ResourceId";
 import RequestCmp from "./RequestCmp";
 
 
-const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
-const openrouteservice = require("../../package.json")["openrouteservice"];
+//const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
+//const openrouteservice = require("../../package.json")["openrouteservice"];
 
-var candidates = require("../resources.json");
+//var candidates = require("../resources.json");
 
 class Request extends React.Component {
 
@@ -101,7 +95,7 @@ class Request extends React.Component {
   }
 
   handleEquipment1 (e){
-     if(this.state.equipment1 == 0){
+     if(this.state.equipment1 ===0){
       this.setState({equipment1:1});
     }
     else{
@@ -109,7 +103,7 @@ class Request extends React.Component {
     }
   }
   handleEquipment2 (e){
-    if(this.state.equipment2 == 0){
+    if(this.state.equipment2 ===0){
      this.setState({equipment2:1});
     }
     else{
@@ -117,7 +111,7 @@ class Request extends React.Component {
     }
   }
   handleEquipment3 (e){
-    if(this.state.equipment3 == 0){
+    if(this.state.equipment3 ===0){
     this.setState({equipment3:1});
     }
     else{
@@ -127,7 +121,6 @@ class Request extends React.Component {
 
 
   render(){
-    const hasCandidates = this.state.hasCandidates;
     
     return <div>
     <Header/>
