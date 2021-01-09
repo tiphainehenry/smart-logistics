@@ -13,26 +13,11 @@ class Homepage extends Component {
   
   constructor(props){
     super(props);
-    this.state = { storageValue: 0, 
-      web3: null, 
-      accounts: null, 
-      contract: null,
-      value: 'coconut',
+    this.state = {
       resourceLength: resources.length,
       resourceArray: []
 
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('Your favorite flavor is: ' + this.state.value);
-    event.preventDefault();
   }
 
   componentDidMount(){
