@@ -482,13 +482,13 @@ class MyContracts extends React.Component {
     <Form.Row>
       <Col sm={6}>
     <Form.Group controlId="formGridEmail">
-        <Form.Label>Gross weight</Form.Label>
+        <Form.Label>Gross weight (kg)</Form.Label>
         <Form.Control type="address" placeholder="gross weight" value={this.state.merchandise.weight} onChange={this.handleWeight}/>
       </Form.Group>
       </Col>
       <Col sm={6}>
       <Form.Group  controlId="formGridEmail">
-        <Form.Label >Gross Volume</Form.Label>
+        <Form.Label >Gross Volume (m3)</Form.Label>
         <Form.Control type="address" placeholder="gross volume" value={this.state.merchandise.volume} onChange={this.handleVolume}/>
       </Form.Group>
       </Col>
