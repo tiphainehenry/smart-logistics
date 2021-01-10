@@ -7,7 +7,12 @@ import Header from "./Header";
 import Footer from "./Footer";
 import ResourceId from "./ResourceId";
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-186881152-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
 var resources = require('../resources.json');
+
 
 class Homepage extends Component {
   

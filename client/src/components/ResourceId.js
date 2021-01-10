@@ -12,6 +12,11 @@ import ECMR from '../contracts/ECMR.json';
 
 import getWeb3 from '../getWeb3';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-186881152-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
+
 class ResourceId extends React.Component {
 
   constructor(props){
@@ -79,7 +84,13 @@ class ResourceId extends React.Component {
 
   async hireCandidate(){
     //alert(this.props.sc[1][0]+ " is hiring " + this.props.resource.name + " on " +this.props.service[0].replace(',','/'));
-    console.log(this.props.service);
+    //console.log(this.props.service);
+
+    ReactGA.event({
+      category:'Form',
+      action:'Hire SC candidate submit'
+    });
+
 
     this.props.history.push({ pathname: '/empty' });
     this.props.history.replace({ pathname: '/mycontracts' });

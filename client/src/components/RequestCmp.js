@@ -6,13 +6,18 @@ import Elect from '../contracts/Elect.json';
 import getWeb3 from '../getWeb3';
 
 import ResourceId from "./ResourceId";
-import axios from 'axios';
+//import axios from 'axios';
 
-const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
-const openrouteservice = require("../../package.json")["openrouteservice"];
+//const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
+//const openrouteservice = require("../../package.json")["openrouteservice"];
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-186881152-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 var candidates = require("../resources.json");
+
+
 
 class RequestCmp extends React.Component {
 
@@ -241,9 +246,12 @@ class RequestCmp extends React.Component {
     const bcCandidates = await this.state.contract.methods.getCandidates().call();
     //console.log(bcCandidates);
 
+    ReactGA.event({
+      category:'Form',
+      action:'FilterAndSort submit'
+    });
 
     // send to BC
-
     await this.state.contract.methods.elect(
           this.state.filteringAttributes,
           this.state.date,

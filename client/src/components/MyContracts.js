@@ -14,7 +14,7 @@ import Hire from '../contracts/Hire.json';
 import getWeb3 from '../getWeb3';
 
 import ReactGA from 'react-ga';
-ReactGA.initialize('UA-186881152-1');
+ReactGA.initialize('UA-186881152-2');
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 class MyContracts extends React.Component {
@@ -193,7 +193,7 @@ class MyContracts extends React.Component {
     }
   }
 
-  async handleRegistration(){
+  async handleRegistration(event){
 
     this.refreshBCQuery();
 
@@ -203,6 +203,10 @@ class MyContracts extends React.Component {
     //  [this.state.service.shipFrom,this.state.service.shipTo, this.state.service.takeover], this.state.merchandise.nature, 
     //  [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume]);
 
+    ReactGA.event({
+      category:'Form',
+      action:'NewAggreement submit'
+    });
 
     await this.state.contract.methods.addAggreement(
       [this.state.tenants.consignee.address,this.state.tenants.consignor.address],
@@ -211,6 +215,8 @@ class MyContracts extends React.Component {
       this.state.merchandise.nature, 
       [this.state.merchandise.quantity, this.state.merchandise.weight,this.state.merchandise.volume] 
        ).send({ from: this.state.accounts[0] });  
+
+
   }
 
   refreshBCQuery = () => {

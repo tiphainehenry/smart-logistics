@@ -9,6 +9,9 @@ import Header from "./Header";
 import Footer from "./Footer";
 import RequestCmp from "./RequestCmp";
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-186881152-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 //const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
 //const openrouteservice = require("../../package.json")["openrouteservice"];
@@ -64,10 +67,20 @@ class Request extends React.Component {
   handleExperienceRatio = (e) =>{
     e.preventDefault();
     this.setState({experienceRatio:e.target.value});
+    ReactGA.event({
+      category:'Form',
+      action:'ExperienceRatio tweaked'
+    });
   }
 
   handleDelayRatio = (e) =>{
     e.preventDefault();
+
+    ReactGA.event({
+      category:'Form',
+      action:'DelayRatio tweaked'
+    });
+ 
     this.setState({delayRatio:e.target.value});
   }
   handleDurationRatio = (e) =>{
