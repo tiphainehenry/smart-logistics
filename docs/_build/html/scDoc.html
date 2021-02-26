@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Contracts &#8212; SmartBind 1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="smart-contracts">
+<span id="sc-ref"></span><h1>Smart Contracts<a class="headerlink" href="#smart-contracts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="resource-binding-manager">
+<h2>Resource binding manager<a class="headerlink" href="#resource-binding-manager" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="elect-sc">
+<h3>Elect SC<a class="headerlink" href="#elect-sc" title="Permalink to this headline">¶</a></h3>
+<dl class="sol contract">
+<dt id="Elect">
+<em><span class="pre">contract</span> </em><code class="sig-name descname"><span class="pre">Elect</span></code> <span class="pre">is</span> <span class="pre">usingProvable</span><a class="headerlink" href="#Elect" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Title</dt>
+<dd class="field-odd"><p>A smart contract to elect a profile based on a set of objective criteria, and a QoS.</p>
+</dd>
+</dl>
+<dl class="sol event">
+<dt id="Elect.BestCandidates(string,string)">
+<em><span class="pre">event</span> </em><code class="sig-name descname"><span class="pre">BestCandidates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">string</span> <span class="pre">ExistCandidates</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">profiles</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Elect.BestCandidates(string,string)" title="Permalink to this definition">¶</a><br /><a class="headerlink" href="#Elect.BestCandidates(string,string)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Answers to a service request by providing the oracle output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ExistCandidates</strong> – Note to the user: whether a matching candidate has been retrieved.</p></li>
+<li><p><strong>profiles</strong> – If success, this variables holds the profile details of the best candidates.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="Elect.filterScan(uint256[],uint256[])">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">filterScan</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint256[]</span> <span class="pre">memory</span> <span class="pre">attributes</span></em>, <em class="sig-param"><span class="pre">uint256[]</span> <span class="pre">memory</span> <span class="pre">availability</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Elect.filterScan(uint256[],uint256[])" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">payable</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint256[]</span> <span class="pre">memory</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#Elect.filterScan(uint256[],uint256[])" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>Scans each profile of the candidates matrix to find matching resources.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>attributes</strong> – The binary array of required attributes (set of filtering criteria)</p></li>
+<li><p><strong>availability</strong> – The availability date required (also a filtering criteria)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>binary array of matching candidates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="Elect.__callback(bytes32,string)">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">__callback</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bytes32</span> <span class="pre">myid</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">result</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Elect.__callback(bytes32,string)" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /><a class="headerlink" href="#Elect.__callback(bytes32,string)" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is triggered by the oracle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>Callback function. Emits to the user the best profiles retrieved based on the QoS computation.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>myid</strong> – The binary array of required attributes (set of filtering criteria)</p></li>
+<li><p><strong>result</strong> – best profiles retrieved by the oracle.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="Elect.sort(uint256[],uint256[],string,uint256)">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">sort</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint256[]</span> <span class="pre">memory</span> <span class="pre">attributes</span></em>, <em class="sig-param"><span class="pre">uint256[]</span> <span class="pre">memory</span> <span class="pre">availability</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">alphas</span></em>, <em class="sig-param"><span class="pre">uint256</span> <span class="pre">num_alphas</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Elect.sort(uint256[],uint256[],string,uint256)" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">payable</span></em><br /><a class="headerlink" href="#Elect.sort(uint256[],uint256[],string,uint256)" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>Main function: Scans each profile of the candidates matrix to find matching resources. If a match exists, ask the oracle for a QoS sorting.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>attributes</strong> – The binary array of required attributes (set of filtering criteria)</p></li>
+<li><p><strong>availability</strong> – The availability date required (also a filtering criteria)</p></li>
+<li><p><strong>alphas</strong> – The weighing optimization values (string concatenation to reduce compuation costs (format required for the API call))</p></li>
+<li><p><strong>num_alphas</strong> – The number of weighing optimization factors (not computed in the SC to limit computation costs).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>binary array of matching candidates</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="toolbox">
+<h3>Toolbox<a class="headerlink" href="#toolbox" title="Permalink to this headline">¶</a></h3>
+<dl class="sol library">
+<dt id="ElectToolbox">
+<em><span class="pre">library</span> </em><code class="sig-name descname"><span class="pre">ElectToolbox</span></code><a class="headerlink" href="#ElectToolbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Title</dt>
+<dd class="field-odd"><p>A toolbox to filter a set of candidates based on a set of filtering criteria.</p>
+</dd>
+</dl>
+<dl class="sol function">
+<dt id="ElectToolbox.oneDayAvailability(uint[],uint[])">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">oneDayAvailability</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint[]</span> <span class="pre">memory</span> <span class="pre">_person</span></em>, <em class="sig-param"><span class="pre">uint[]</span> <span class="pre">memory</span> <span class="pre">_availability</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ElectToolbox.oneDayAvailability(uint[],uint[])" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">pure</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#ElectToolbox.oneDayAvailability(uint[],uint[])" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>checks whether a person is available for a given day</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_person</strong> – The person availability date</p></li>
+<li><p><strong>_availability</strong> – The availability date required</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>1 if person is available, 0 otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="ElectToolbox.severalDaysAvailability(uint[],uint[])">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">severalDaysAvailability</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint[]</span> <span class="pre">memory</span> <span class="pre">_person</span></em>, <em class="sig-param"><span class="pre">uint[]</span> <span class="pre">memory</span> <span class="pre">_availability</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ElectToolbox.severalDaysAvailability(uint[],uint[])" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">pure</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#ElectToolbox.severalDaysAvailability(uint[],uint[])" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>checks whether a person is available for a set of days</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_person</strong> – The person availability dates</p></li>
+<li><p><strong>_availability</strong> – The availability date required</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>1 if person is available, 0 otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="ElectToolbox.uint2str(uint)">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">uint2str</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint</span> <span class="pre">_i</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ElectToolbox.uint2str(uint)" title="Permalink to this definition">¶</a><br /> <em><span class="pre">internal</span></em><br /> <em><span class="pre">pure</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_uintAsString</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#ElectToolbox.uint2str(uint)" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>converts a uint into a str</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_i</strong> – The uint to convert</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>the string conversion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="ElectToolbox.list2string(uint[])">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">list2string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint[]</span> <span class="pre">memory</span> <span class="pre">list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ElectToolbox.list2string(uint[])" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">pure</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#ElectToolbox.list2string(uint[])" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>converts a list into a str</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>list</strong> – The list to convert</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>the string conversion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="ElectToolbox.uintarrays2string(uint[][],uint)">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">uintarrays2string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint[][]</span> <span class="pre">memory</span> <span class="pre">array</span></em>, <em class="sig-param"><span class="pre">uint</span> <span class="pre">num_param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ElectToolbox.uintarrays2string(uint[][],uint)" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">pure</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#ElectToolbox.uintarrays2string(uint[][],uint)" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Notice</dt>
+<dd class="field-odd"><p>converts a chunk of an array into a str (used to extract the QoS criteria of the candidates matrix)</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>array</strong> – The array to convert</p></li>
+<li><p><strong>num_param</strong> – The number of columns to extract</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>the string conversion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="aggreement-manager">
+<h2>Aggreement manager<a class="headerlink" href="#aggreement-manager" title="Permalink to this headline">¶</a></h2>
+<dl class="sol contract">
+<dt id="Hire">
+<em><span class="pre">contract</span> </em><code class="sig-name descname"><span class="pre">Hire</span></code><a class="headerlink" href="#Hire" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Title</dt>
+<dd class="field-odd"><p>A smart contract to generate and record a set of binding agreements</p>
+</dd>
+</dl>
+<dl class="sol function">
+<dt id="Hire.addAggreement(address[2],string,string[3],string,uint256[3])">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">addAggreement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">address[2]</span> <span class="pre">memory</span> <span class="pre">_ppl</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_issuanceDate</span></em>, <em class="sig-param"><span class="pre">string[3]</span> <span class="pre">memory</span> <span class="pre">_shipInfo</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_nature</span></em>, <em class="sig-param"><span class="pre">uint256[3]</span> <span class="pre">memory</span> <span class="pre">_details</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Hire.addAggreement(address[2],string,string[3],string,uint256[3])" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">payable</span></em><br /><a class="headerlink" href="#Hire.addAggreement(address[2],string,string[3],string,uint256[3])" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new agreement to the list and emit a success event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_ppl</strong> – the contractor and resource BC address</p></li>
+<li><p><strong>_issuanceDate</strong> – date of issuance of the contract</p></li>
+<li><p><strong>_shipInfo</strong> – shipment information</p></li>
+<li><p><strong>_nature</strong> – nature of the items to deliver</p></li>
+<li><p><strong>_details</strong> – merchandise details (quantity,gross weight and volume)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="Hire.totalAggreements()">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">totalAggreements</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Hire.totalAggreements()" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">view</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint256</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#Hire.totalAggreements()" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns then number of aggreement stored in the SC</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return</dt>
+<dd class="field-odd"><p>the number of agreements stored in the SC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="sol function">
+<dt id="Hire.seeAggreement(uint256,address)">
+<em><span class="pre">function</span> </em><code class="sig-name descname"><span class="pre">seeAggreement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">uint256</span> <span class="pre">i</span></em>, <em class="sig-param"><span class="pre">address</span> <span class="pre">sender</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Hire.seeAggreement(uint256,address)" title="Permalink to this definition">¶</a><br /> <em><span class="pre">public</span></em><br /> <em><span class="pre">view</span></em><br /> <em><span class="pre">returns</span> </em><span class="sig-paren">(</span><em class="sig-param"><span class="pre">address[2]</span> <span class="pre">memory</span> <span class="pre">_ppl</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_issuanceDate</span></em>, <em class="sig-param"><span class="pre">string[3]</span> <span class="pre">memory</span> <span class="pre">_shipInfo</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_nature</span></em>, <em class="sig-param"><span class="pre">uint256[3]</span> <span class="pre">memory</span> <span class="pre">_details</span></em>, <em class="sig-param"><span class="pre">string</span> <span class="pre">memory</span> <span class="pre">_status</span></em><span class="sig-paren">)</span><br /><a class="headerlink" href="#Hire.seeAggreement(uint256,address)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for the identity of the requester, and display the requested aggreement
+if the identity matches with the contractor or service provider.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> – index of the contract stored</p></li>
+<li><p><strong>sender</strong> – BC address of the requester</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p>the agreement details if the identity of the requester is correct, a fake agreement otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartBind</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Smart Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#resource-binding-manager">Resource binding manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aggreement-manager">Aggreement manager</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="introduction.html" title="previous chapter">Introduction</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Tiphaine Henry.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/scDoc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

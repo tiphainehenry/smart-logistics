@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Route,
+  Switch,
   BrowserRouter
 } from "react-router-dom";
 import Homepage from './components/Homepage';
@@ -12,10 +13,12 @@ import MyContracts from './components/MyContracts';
 const App = () => (
   <BrowserRouter>
       <div className="sans-serif">
+      <Switch>
       <Route exact path="/" component={Homepage} />
       <Route exact path="/request" component={Request} />
       <Route exact path="/ecmr" component={Ecmr} />
       <Route exact path="/mycontracts" component={MyContracts} />
+      </Switch>
     </div>
   </BrowserRouter>
 );

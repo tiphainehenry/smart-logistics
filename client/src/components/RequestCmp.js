@@ -46,9 +46,9 @@ class RequestCmp extends React.Component {
 
       balance:0,
 
-      //provableAddress: '0x87b2729580a0842be45e2cb6b7c564d0989fde18' // for ganache
+      provableAddress: "0x87B2729580A0842BE45E2CB6b7C564d0989FDE18" // for ganache
 
-      provableAddress: '0xBcB81ae97446B6946a72A07d35b2849fc5C68455' // for ganache
+      //provableAddress: '0xBcB81ae97446B6946a72A07d35b2849fc5C68455' // for ganache
 
     };
 
@@ -59,6 +59,7 @@ class RequestCmp extends React.Component {
     this.FundContract = this.FundContract.bind(this);
 
   };
+
   
   async componentWillMount() {
     // instanciating the smart contract //
@@ -144,8 +145,9 @@ class RequestCmp extends React.Component {
       // update candidates (mockup environment)
       const bcCandidates = await instance.methods.getCandidates().call();
 
+      if ((bcCandidates === null)){ // mockup setting
 
-      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
+//      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
         alert('A transaction to instanciate the candidate db will be asked after you close this window.');
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
@@ -244,7 +246,7 @@ class RequestCmp extends React.Component {
 
   async askSCSort(){
     const bcCandidates = await this.state.contract.methods.getCandidates().call();
-    //console.log(bcCandidates);
+    console.log(bcCandidates);
 
     ReactGA.event({
       category:'Form',
@@ -252,73 +254,28 @@ class RequestCmp extends React.Component {
     });
 
     // send to BC
-    await this.state.contract.methods.elect(
+    await this.state.contract.methods.sort(
           this.state.filteringAttributes,
           this.state.date,
           this.props.optimRatios.toString(),
           this.props.optimRatios.length
         ).send({from: this.state.accounts[0],
-                gas:4712388,
+                gas:5712388,
                 gasPrice: 100000000000});    
-    
-
-    // Normalize
-
-    /// retrieve optim matrix
-    //var ToNormalize = [];
-    //for(var i=0;i<bcCandidates.length;i++){
-    //  var candidateProfile = []
-    //  for(var j=10;j<bcCandidates[0].length;j++){
-    //    candidateProfile.push(bcCandidates[i][j]);
-    //  }
-
-    //  candidateProfile.push(this.state.dists[i]);
-    //  candidateProfile.push(this.state.durations[i]);
-
-    //  ToNormalize.push(candidateProfile);
-    //}
-
-    // normalize matrix
-    //var cols=[]
-    //for (var j=0;j<ToNormalize[0].length;j++){
-    //  var col = ToNormalize.map(function(value,index) { return value[j]; });
-      
-    //  var ratio = Math.max.apply(Math, col);
-    //  for (var i = 0; i < col.length; i++) {
-    //      col[i] = Math.round(col[i] / ratio);
-    //  }
-    //  cols.push(col);
-    //}
-
-    //var normalized = [];
-    //for (var i=0;i<cols[0].length;i++){
-    //  var line = cols.map(function(value,index) { return value[i]; });            
-    //  normalized.push(line);
-    //}
-    //console.log(normalized);
-
-    //var qosList = []
-    //for (var i=0;i<normalized.length;i++){
-    //  var line = normalized[i];
-    //  var qos_i = 0;
-
-    //  for (var j=0;j<line.length;j++){
-    //    qos_i = qos_i+this.props.optimRatios[j]*line[j];
-    //  }
-    //  qosList.push(qos_i);
-    //}
-
-    
+        
   }
 
   async FundContract(){
-    const balance = await this.state.web3.eth.getBalance(this.state.provableAddress);
+
+
+
+    const balance = await this.state.web3.eth.getBalance('0x87b2729580a0842be45e2cb6b7c564d0989fde18');
     console.log('Current balance is '+ balance.toString());
 
 
     await this.state.web3.eth.sendTransaction({
-        from: this.state.accounts[0],
-        to: this.state.provableAddress,
+        from: "0x89033bC8f73Ef5b46CCb013f6F948b00954a06BB",
+        to: "0x87b2729580a0842be45e2cb6b7c564d0989fde18",
         value: this.state.web3.utils.toWei('1', 'ether'),
         data: this.state.accounts[0]
           })
