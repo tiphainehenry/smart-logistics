@@ -1,3 +1,8 @@
+# Online access:
+The Dapp is deployed and accessible at https://mynewscmarketplace.herokuapp.com/mycontracts
+
+# Local setup
+
 ## Installation
 
     npm install
