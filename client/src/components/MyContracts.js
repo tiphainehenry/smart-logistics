@@ -8,7 +8,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
  
 import Header from "./Header";
-import Footer from "./Footer";
 
 import Hire from '../contracts/Hire.json';
 import getWeb3 from '../getWeb3';
@@ -528,8 +527,6 @@ class MyContracts extends React.Component {
 
       </div>
   </div>
-
-  <Footer/>
   </div>;
   }};
 
