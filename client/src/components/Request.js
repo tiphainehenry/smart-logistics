@@ -6,17 +6,11 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 
 import Header from "./Header";
-import Footer from "./Footer";
 import RequestCmp from "./RequestCmp";
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('UA-186881152-2');
 ReactGA.pageview(window.location.pathname + window.location.search);
-
-//const opengeocodingAPI = require("../../package.json")["opengeocodingAPI"];
-//const openrouteservice = require("../../package.json")["openrouteservice"];
-
-//var candidates = require("../resources.json");
 
 class Request extends React.Component {
 
@@ -257,7 +251,6 @@ class Request extends React.Component {
 
   </div>
   </div>
-  <Footer/>
 
   </div>;
   }};
