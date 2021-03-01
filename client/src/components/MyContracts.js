@@ -359,7 +359,7 @@ class MyContracts extends React.Component {
 
 <table id="news-table" className="table tablesorter mb-5">
           <caption>
-            My Contracts.
+            My binding aggreements.
           </caption>
           <thead className="cf">
             <tr key={0}>
@@ -411,7 +411,7 @@ class MyContracts extends React.Component {
 
         <br/>
 
-  <h1>Generate a new contract.</h1>
+  <h1>Generate a new binding aggreement.</h1>
 
   <Tabs defaultActiveKey="tenants" id="uncontrolled-tab-example">
     <Tab eventKey="tenants" title="(1) Service">

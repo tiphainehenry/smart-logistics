@@ -134,8 +134,9 @@ class Request extends React.Component {
     <div className="discovery-module-one-pop-out py-5 py-lg-3">
     <div className="container">
 
-    <h1>A Smart-Contract for Delocated Resource Matching.</h1> 
+    <h1>Resource Binding Smart-Contract.</h1> 
     <p>Fill in this form to find the right resource for your needs.</p>
+    <p>Watch out: the resource availability has been tuned for January 12th, and January 13th 2021.</p>
     <hr/><br/>
 
 
