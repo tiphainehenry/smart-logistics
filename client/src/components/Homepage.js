@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import "../css/boosted.min.css";
 
 import Header from "./Header";
-import Footer from "./Footer";
 import ResourceId from "./ResourceId";
 
 import ReactGA from 'react-ga';
@@ -58,9 +57,6 @@ class Homepage extends Component {
                 </div>
             </div>
         </div>
-
-        <Footer/>
-    
       </div>
       
     );
