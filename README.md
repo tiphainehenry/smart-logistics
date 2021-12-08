@@ -11,7 +11,7 @@ The Dapp is deployed and accessible at https://mynewscmarketplace.herokuapp.com/
 
 Launch local blockchain in terminal:
 
-    ganache-cli -m "east enjoy keen nut hat debris blur trophy alone steak large federal"
+    ganache-cli -l 8000000 -m "east enjoy keen nut hat debris blur trophy alone steak large federal"
 
 In a second terminal, migrate your smart contracts:
 

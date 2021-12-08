@@ -148,7 +148,7 @@ class RequestCmp extends React.Component {
       if ((bcCandidates === null)){ // mockup setting
 
 //      if ((bcCandidates === null) | ((bcCandidates !== null) && (bcCandidates.length !== this.state.candidateMatrix.length))){ // mockup setting
-        alert('A transaction to instanciate the candidate db will be asked after you close this window.');
+        alert('A transaction to instantiate the candidate db will be asked after you close this window.');
         await instance.methods.setCandidates(this.state.candidateMatrix).send({ from: this.state.accounts[0] });  
       }
 

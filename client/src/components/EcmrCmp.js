@@ -37,7 +37,7 @@ class EcmrCmp extends React.Component {
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.instanciateSC = this.instanciateSC.bind(this);
+    this.instantiateSC = this.instantiateSC.bind(this);
 
   };
 
@@ -128,7 +128,7 @@ class EcmrCmp extends React.Component {
             lat:result['results'][4]['locations'][0]['displayLatLng'].lat,
             lng:result['results'][4]['locations'][0]['displayLatLng'].lng}}); 
 
-          this.instanciateSC();
+          this.instantiateSC();
           }, 
       (error) => { 
           console.log(error); 
@@ -137,7 +137,7 @@ class EcmrCmp extends React.Component {
     
   }
 
-  async instanciateSC(){
+  async instantiateSC(){
 
     if(this.props.takeover !==''){
       await this.state.contract.methods.initializeTenants(this.props.consigneeETH, this.state.consignee.lat.toString(), this.state.consignee.lng.toString(),

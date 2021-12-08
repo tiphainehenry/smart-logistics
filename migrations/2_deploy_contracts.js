@@ -8,6 +8,9 @@ const ElectToolbox = artifacts.require("ElectToolbox");
 
 const ElectOptim = artifacts.require("ElectOptim");
 
+const TenderManager = artifacts.require("TenderManager");
+
+
 module.exports = function(deployer,network,accounts) {
   deployer.deploy(ECMR);
   deployer.deploy(SafeMath);
@@ -23,8 +26,12 @@ module.exports = function(deployer,network,accounts) {
   deployer.link(usingProvable,ElectOptim);
   deployer.link(ElectToolbox,ElectOptim);
 
-  deployer.deploy(Elect);
+  deployer.deploy(Elect,{from:accounts[9],value:500000000000000000});
   deployer.deploy(ElectOptim);
   deployer.deploy(Hire);
+
+  deployer.link(usingProvable,TenderManager);
+  deployer.link(ElectToolbox,TenderManager);
+  deployer.deploy(TenderManager,{from:accounts[9],value:500000000000000000});
 
 };
