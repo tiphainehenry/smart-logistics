@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Button, Row, Col} from 'react-bootstrap';
+import {Form, Button, Row, Col, Card} from 'react-bootstrap';
 import '../css/boosted.min.css';
 
 import TenderManager from '../contracts/TenderManager.json';
@@ -34,6 +34,7 @@ class FHERequest extends React.Component {
       myTenderChoice:'',
 
       offers:[],
+      tenderStatus:[],
 
       balance:'',
       provableAddress: "0x015a15fc6c86C9082EF04A5f974E5da098E6b543", // for ganache
@@ -157,15 +158,48 @@ class FHERequest extends React.Component {
 
   }
 
+  cleanSCOffer(_offer){
+    if(_offer[_offer.length-1]===','){
+      return _offer.slice(0,-1);
+    }
+    else{
+      return _offer;
+    }    
+  }
+
+
+  mapIntToStatus(_input){
+    var result ="Waiting for offers...";
+    switch(_input){
+      case "1":
+        result="Open";
+        break;
+      case "2": 
+        result="Pending (ongoing comparison)";
+        break;
+      case "3": 
+        result="Done";
+        break;
+    }
+
+    return result;
+  }
+
   async cmptTenderList(){
           /// retrieve tender list
           var tenderList = await this.state.contract.methods.getTenders().call();
 
           var offers=[]
+          var TenderStatus=[]
           for(var i=0;i<tenderList.length;i++){
+
+            var ith_status = await this.state.contract.methods.getTenderStatus(tenderList[i]).call();
+            TenderStatus.push(this.mapIntToStatus(ith_status));
+
             var new_item = [];
             
             var offers_i = await this.state.contract.methods.getOffers(tenderList[i]).call();
+            console.log(offers_i);
     
             if(offers_i.includes(',')){
               offers_i = offers_i.split('},{');
@@ -178,7 +212,8 @@ class FHERequest extends React.Component {
     
           this.setState({
             tenderList:tenderList,
-            offers:offers
+            offers:offers, 
+            tenderStatus: TenderStatus
           });
     
     
@@ -242,7 +277,18 @@ class FHERequest extends React.Component {
 
   }
 
-  async launchComparison(){
+  async launchComparison(offers_i){
+
+    // print offer
+    var tenderList = await this.state.contract.methods.getTenders().call();
+    for (var i=0; i<tenderList.length;i++){
+      if(tenderList[i]===this.state.tenderName){
+        var offers_i = await this.state.contract.methods.getOffers(tenderList[i]).call();
+        console.log(this.cleanSCOffer(offers_i));
+      }
+    }
+   
+    //call contract
     await this.state.contract.methods.askOracleComparison(         
       this.state.tenderName
     ).send({
@@ -442,42 +488,9 @@ class FHERequest extends React.Component {
     <div className="discovery-module-one-pop-out py-5 py-lg-3">
     <div className="container">
 
-    <h1>Blind Allocation Smart-Contract.</h1> 
-    <hr/><br/>
+    <h1>FHE Allocation Smart-Contract.</h1> 
 
-    <h3>[Tender Initiator] RSA public key (SC hash => {this.state.RSApk_fromSC}).</h3>
-
-    <Form>
-
-    <Form.Group controlId="formBasicEmail">
-        <Row>
-          <Col>
-            <h6>Set/reset RSA public key hash: </h6>
-            <p>{this.state.RSApk}</p> 
-          </Col>
-          <Col>
-            <Form.Label className="is-required">Upload file</Form.Label>
-            <div class="custom-file">
-              <form>
-                <input type="file" class="custom-file-input" id="exampleInputFile" onChange={this.onRSAkeyChange} aria-describedby="helpTextFile" />
-                <label class="custom-file-label" for="exampleInputFile">{this.state.RSAkeyfileName}</label>
-              </form>
-            </div>
-          </Col>
-          <Col>
-            <Button className="is-required" onClick={this.onIPFSSubmitRSAkey}>Save RSA pub key to IPFS</Button>
-            <span class="form-text small text-muted" id="helpTextFile">Using infura ipfs storage.</span>
-          </Col>
-      </Row>
-
-      </Form.Group>
-      <Button onClick={this.registerRSApk}>+</Button>
-
-    </Form>  
-
-    <hr/><br/>
-    <hr/><br/>
-
+    <hr/>
     <h3>Registered Tenders</h3>
 
     <div>
@@ -485,7 +498,8 @@ class FHERequest extends React.Component {
             <Col ><h5>Name</h5></Col>
             <Col ><h5>Offers</h5></Col>
             <Col ><h5>Status</h5></Col>
-            </Row>
+            <Col ><h5>Comparison result</h5></Col>
+    </Row>
 
     {this.state.tenderList.map((name, index) => {
 
@@ -501,40 +515,113 @@ class FHERequest extends React.Component {
                 }):<></>}
               </ol>
             </Col>
-            <Col>NA</Col>
-
-          </Row>
-
+            <Col>
+            {(typeof this.state.tenderStatus[index] != "undefined")?
+                this.state.tenderStatus[index]
+                :<></>}
+            </Col>
+            <Col>"..."</Col>
+          </Row>          
         );
       })}
-
+    <hr/><br/>
 
     </div>
 
-    <hr/><hr/><br/>
+    <Card>
+      <Card.Header> Tender Initiator</Card.Header>
+    <Card.Body>
+        <Form>
+          <Form.Group controlId="formBasicEmail">
+              <Row>
+                <Col>
+                <h4>Set/reset RSA public key</h4>
+                  <p>{this.state.RSApk}</p> 
+                </Col>
+                <Col>
+                  <Form.Label className="is-required">Upload file</Form.Label>
+                  <div class="custom-file">
+                    <form>
+                      <input type="file" class="custom-file-input" id="exampleInputFile" onChange={this.onRSAkeyChange} aria-describedby="helpTextFile" />
+                      <label class="custom-file-label" for="exampleInputFile">{this.state.RSAkeyfileName}</label>
+                    </form>
+                  </div>
+                </Col>
+                <Col>
+                  <Button className="is-required" onClick={this.onIPFSSubmitRSAkey}>Save RSA pub key to IPFS</Button>
+                  <span class="form-text small text-muted" id="helpTextFile">Using infura ipfs storage.</span>
+                </Col>
+            </Row>
 
+            </Form.Group>
+            <Button onClick={this.registerRSApk}>send to smart contract</Button>
 
+          </Form>  
 
+          <hr/>
 
-    <h3>[Tender Initiator] Create a new tender.</h3>
+          <h4>Create a new tender</h4>
+          <Form>
+          <Form.Group controlId="formBasicEmail">
+            <Row>
+              <Col>
+            <Form.Control onChange={this.handleNewTenderName} value={this.state.newTenderName}  placeholder={'enter the tender name'}/>
+            </Col>
+            <Col>
+            <Button onClick={this.registerSC}>send to smart contract</Button>
+            </Col>
+            </Row>
+          </Form.Group>
+          </Form>  
 
-    <Form>
-    <Form.Group controlId="formBasicEmail">
+          <hr/>
+
+          <h4>Close tender and launch comparison.</h4>
+      <div className="form-group">
+      <label className="is-required" htmlFor="role">Tender name</label>
+
       <Row>
         <Col>
-      <Form.Control onChange={this.handleNewTenderName} value={this.state.newTenderName}  placeholder={'enter the tender name'}/>
+      <select className="custom-select" name="view-selector" onChange={this.handleTenderChoice} placeholder={"Sender"} value={this.state.myTenderChoice}>
+      <option value=''> ---</option>
+      {
+      React.Children.toArray(
+        this.state.tenderList.map((name, i) => <option key={i}>{name}</option>)
+      )
+      }
+      </select>
       </Col>
       <Col>
-      <Button onClick={this.registerSC}>+</Button>
+      <Button onClick={this.launchComparison}>Compare and allocate</Button>
+      {this.state.balance < 10000000 ? 
+          <Button variant="primary" type="submit" onClick={this.FundContract}>
+          Fund Oracle
+          </Button>:
+          <Button variant="primary" type="submit" onClick={this.FundContract} disabled>
+              Fund Oracle
+          </Button>
+          }
+          {' '}
+
       </Col>
       </Row>
-    </Form.Group>
-</Form>  
+      </div>
 
-  
-    <hr/><br/>
+      <Button onClick={this.getURLtest}>Debug</Button>
+      <p>{this.state.urlTest}</p>
+  </Card.Body>
+</Card>
+<br/>
+    <Card>
+      <Card.Header> Driver</Card.Header>
+        <Card.Body>
 
-    <h3>[Participant] Fill in this form to register an offer.</h3>
+        <h4> Stored RSA key retrieved from SC</h4>
+
+        <p>{this.state.RSApk_fromSC})</p> 
+
+<hr/>
+    <h4> Fill in this form to register an offer.</h4>
     <div className="form-group">
   <label className="is-required" htmlFor="role">Tender name</label>
   <select className="custom-select" name="view-selector" onChange={this.handleTenderName} placeholder={"Sender"} value={this.state.tenderName}>
@@ -602,43 +689,10 @@ class FHERequest extends React.Component {
       tenderName = {this.state.tenderName}
       
     />
+        </Card.Body>
+  </Card>
 
 
-<hr/><br/>
-
-<h3>[Tender Initiator] Close tender and launch comparison.</h3>
-<div className="form-group">
-<label className="is-required" htmlFor="role">Tender name</label>
-
-<Row>
-  <Col>
-<select className="custom-select" name="view-selector" onChange={this.handleTenderChoice} placeholder={"Sender"} value={this.state.myTenderChoice}>
-<option value=''> ---</option>
-{
-React.Children.toArray(
-  this.state.tenderList.map((name, i) => <option key={i}>{name}</option>)
-)
-}
-</select>
-</Col>
-<Col>
-<Button onClick={this.launchComparison}>Compare and allocate</Button>
-{this.state.balance < 10000000 ? 
-    <Button variant="primary" type="submit" onClick={this.FundContract}>
-    Fund Oracle
-    </Button>:
-    <Button variant="primary" type="submit" onClick={this.FundContract} disabled>
-        Fund Oracle
-    </Button>
-    }
-    {' '}
-
-</Col>
-</Row>
-</div>
-
-<Button onClick={this.getURLtest}>Debug</Button>
-<p>{this.state.urlTest}</p>
   </div>
   </div>
 

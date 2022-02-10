@@ -32,19 +32,46 @@ contract TenderManager is usingProvable {
 
     
     event LogBestAlloc(string result);
-    event LogNewProvableQuery(string description);
+    event LogNewProvableQuery( 
+        string tenderName,
+        string offers
+        );
 
     constructor() public payable {
         // ...
     }
 
+    /// @notice getter to fetch RSA public key.
+    /// @return RSA public key hash 
+    function getRSApk() public view returns (string memory){
+        return OracleRSAPubKey;
+    }
+ 
+    /// @notice sets RSA public key.
+    /// @return RSA public key hash 
+    function setRSApk(string memory _RSApk) public payable returns (string memory) {
+        OracleRSAPubKey=_RSApk;
+        return OracleRSAPubKey;
+    }
 
+
+    /// @notice getter to fetch list of registered tenders.
+    /// @return list of tenders
     function getTenders() public view returns (string[] memory){
         return tenderList;
     }
 
-    function getRSApk() public view returns (string memory){
-        return OracleRSAPubKey;
+    /// @notice getter to fetch all offers stored in a tender.
+    /// @param _tenderName Name of the tender to fetch
+    /// @return list of offers
+    function getOffers(string memory _tenderName) public view returns (string memory offers){
+        return Tenders[_tenderName].offers;
+    }
+    /// @notice getter to fetch tender status 
+    /// @param _tenderName Name of the tender
+    /// @return tender state (open/pending/closed)
+    function getTenderStatus(string memory _tenderName) public view returns (State state){
+        return Tenders[_tenderName].state;
     }
 
     function getURLTest(string memory tenderName) public view returns (string memory){
@@ -54,13 +81,6 @@ contract TenderManager is usingProvable {
 
         return url;
     }
-
-
-    function setRSApk(string memory _RSApk) public payable returns (string memory) {
-        OracleRSAPubKey=_RSApk;
-        return OracleRSAPubKey;
-    }
-
     
     function append(string memory a, string memory b, string memory c, string memory d, string memory e) internal pure returns (string memory) {
         return string(abi.encodePacked(a, b, c, d, e));
@@ -103,32 +123,26 @@ contract TenderManager is usingProvable {
         emit LogBestAlloc(bestAlloc);
     }
 
-    function getOffers(string memory _tenderName) public view returns (string memory offers){
-        return Tenders[_tenderName].offers;
-    }
 
-    function askOracleComparison(string memory tenderName) public payable returns (string memory result){
-        // send oracle request for comparison
+    /// @notice Launches a comparison: delegation to the oracle of the calculation and emits an event with the ipfs hashes to compare.
+    /// @param _tenderName Name of the tender to fetch
+    /// @return returns ok if the query was well sent to the API
+    function askOracleComparison(string memory _tenderName) public payable returns (string memory result){
+        
+        // emit event
+        string memory tmp_offers = getOffers(_tenderName);
+        emit LogNewProvableQuery(
+                _tenderName, 
+                tmp_offers
+            );
 
-            /// compute qos via oracle
-            //if (provable_getPrice("URL") > address(this).balance) {
-            //    emit LogNewProvableQuery(
-            //        "Provable query was NOT sent, please add some ETH to cover for the query fee"
-            //    );
-            //} else {
-                emit LogNewProvableQuery(
-                    "Provable query was sent, standing by for the answer.."
-                );
+        //string memory str_offers = ElectToolbox.list2string(tmp_offers);
+        //string memory str_offers = ElectToolbox.list2string(Tenders[tenderName].offers);
+        string memory url = append("https://qosapi.herokuapp.com/api/FHEcomp?newComp=",_tenderName,"","","");
+        provable_query("URL", url);
 
-                string memory tmp_offers = getOffers(tenderName);
-                //string memory str_offers = ElectToolbox.list2string(tmp_offers);
-
-                //string memory str_offers = ElectToolbox.list2string(Tenders[tenderName].offers);
-                string memory url = append("https://qosapi.herokuapp.com/api/FHEcomp?offers=",
-                            tmp_offers,"","","");
-                provable_query("URL", url);
-            //}
-
+        // set tender state 
+        Tenders[_tenderName].state= State.PENDING;
 
         return "200";
     }

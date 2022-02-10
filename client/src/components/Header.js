@@ -17,7 +17,7 @@ class Header extends React.Component {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
             <Nav.Link href="/">Homepage</Nav.Link>
-            <Nav.Link href="/FHErequest">Blind allocation demo</Nav.Link>
+            <Nav.Link href="/FHErequest">FHE allocation demo</Nav.Link>
             <Nav.Link href="/request">Search and Hire demo</Nav.Link>
             <Nav.Link href="/mycontracts">Manage Contracts</Nav.Link>
           </Nav>
@@ -29,4 +29,3 @@ class Header extends React.Component {
 }};
 
 export default Header
-
