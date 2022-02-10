@@ -29,6 +29,7 @@ contract TenderManager is usingProvable {
     string bestAlloc;
     mapping(string => Tender) public Tenders;
     string[] tenderList;
+
     
     event LogBestAlloc(string result);
     event LogNewProvableQuery(string description);
@@ -45,6 +46,15 @@ contract TenderManager is usingProvable {
     function getRSApk() public view returns (string memory){
         return OracleRSAPubKey;
     }
+
+    function getURLTest(string memory tenderName) public view returns (string memory){
+        string memory tmp_offers = getOffers(tenderName);
+        string memory url = append("https://qosapi.herokuapp.com/api/FHEcomp?offers=",
+                            tmp_offers,"","","");
+
+        return url;
+    }
+
 
     function setRSApk(string memory _RSApk) public payable returns (string memory) {
         OracleRSAPubKey=_RSApk;

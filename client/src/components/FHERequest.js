@@ -58,7 +58,9 @@ class FHERequest extends React.Component {
 
       AESkeyfileReader: null,
       AESkeyfileName:'Input file',      
-      c_key: JSON.parse(localStorage.getItem('c_key')) || null
+      c_key: JSON.parse(localStorage.getItem('c_key')) || null,
+
+      urlTest: ''
 
 
       
@@ -88,6 +90,8 @@ class FHERequest extends React.Component {
     this.onAESofferChange = this.onAESofferChange.bind(this);
     this.handleAESofferFileRead = this.handleAESofferFileRead.bind(this);
     this.onIPFSSubmitAESoffer = this.onIPFSSubmitAESoffer.bind(this);
+
+    this.getURLtest = this.getURLtest.bind(this); 
 
   };
 
@@ -119,7 +123,9 @@ class FHERequest extends React.Component {
 
       var RSApk_fromSC = await instance.methods.getRSApk().call();
       this.setState({RSApk_fromSC:RSApk_fromSC});
-  
+
+
+
       this.cmptTenderList();
     } catch (error) {
         // Catch any errors for any of the above operations.
@@ -131,6 +137,25 @@ class FHERequest extends React.Component {
 
   }
 
+  async getURLtest(){
+    
+    try{
+      var urlTest = await this.state.contract.methods.getURLTest('test').send({
+        from: this.state.accounts[0]}).then(output=>{
+          console.log(output);
+      })
+
+      console.log(urlTest);
+      this.setState({urlTest:urlTest});
+
+    }
+    catch(error){
+        console.log(error);
+    }
+
+
+
+  }
 
   async cmptTenderList(){
           /// retrieve tender list
@@ -612,6 +637,8 @@ React.Children.toArray(
 </Row>
 </div>
 
+<Button onClick={this.getURLtest}>Debug</Button>
+<p>{this.state.urlTest}</p>
   </div>
   </div>
 

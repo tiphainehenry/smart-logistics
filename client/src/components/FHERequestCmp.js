@@ -121,9 +121,7 @@ class RequestCmp extends React.Component {
           this.props.c_key,
           this.props.c_offer
         ).send({
-          from: this.state.accounts[0],
-          gas:5712388,
-          gasPrice: 100000000000}).then(output=>{
+          from: this.state.accounts[0]}).then(output=>{
             console.log(output);
         })
     }
